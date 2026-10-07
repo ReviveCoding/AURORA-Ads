@@ -1,0 +1,210 @@
+{
+  "design_version": "2.0",
+  "review_date": "2026-09-30",
+  "actual_data_downloaded_in_this_session": false,
+  "availability_note": "Official source pages reviewed. Current container DNS test failed; payload and schema admission not performed. Prior hashes preserved, never removed to force a passing download.",
+  "minimum_disk_reserve_gib": 20,
+  "max_new_download_gib": 5,
+  "datasets": [
+    {
+      "id": "criteo_uplift",
+      "profiles": [
+        "core",
+        "extended"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "purpose": "Binary-assignment ITT and capacity-policy replication; visit primary, conversion secondary.",
+      "source_page": "https://ailab.criteo.com/criteo-uplift-prediction-dataset/",
+      "acquisition": "hf",
+      "repo_id": "criteo/criteo-uplift",
+      "files": [
+        {
+          "path": "criteo-research-uplift-v2.1.csv.gz",
+          "expected_sha256": "2716e1bf0fd157a93b5bf86924d9088419dfbac2022c6cd90030220634f616dc",
+          "expected_size": null
+        }
+      ],
+      "approx_download_bytes": 312000000,
+      "max_total_download_bytes": 400000000,
+      "fields_to_audit": [
+        "f0-f11",
+        "treatment",
+        "exposure",
+        "visit",
+        "conversion"
+      ],
+      "prohibited_uses": [
+        "exposure as pretreatment feature",
+        "true individual treatment-effect labels",
+        "real time or campaign IDs fabricated"
+      ],
+      "prior_exposure": "Previously used in ORBIT/CAUSAL-SCALE. Recover exposure/split ledger; if unavailable after recorded discovery, conservatively flag the entire release potentially exposed and admit only fresh source-verified replication. Never infer virgin rows or reuse old metrics.",
+      "missing_exposure_ledger_disposition": "CONSERVATIVE_FULL_RELEASE_EXPOSURE_REPLICATION_ONLY"
+    },
+    {
+      "id": "criteo_attribution",
+      "profiles": [
+        "core",
+        "extended"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "purpose": "Impression response, campaign time-pattern anchors, descriptive attribution.",
+      "source_page": "https://ailab.criteo.com/criteo-attribution-modeling-bidding-dataset/",
+      "acquisition": "hf",
+      "repo_id": "criteo/criteo-attribution-dataset",
+      "files": [
+        {
+          "path": "criteo_attribution_dataset.tsv.gz",
+          "expected_sha256": "94ac7a465564349bc7ba008602211d5990a3c53cc133abc0aadef61ea2391a98",
+          "expected_size": null
+        }
+      ],
+      "approx_download_bytes": 654000000,
+      "max_total_download_bytes": 800000000,
+      "fields_to_audit": [
+        "timestamp",
+        "uid",
+        "campaign",
+        "conversion",
+        "conversion_timestamp",
+        "conversion_id",
+        "attribution",
+        "click",
+        "click_pos",
+        "click_nb",
+        "cost",
+        "cpo",
+        "time_since_last_click",
+        "cat1-cat9"
+      ],
+      "prohibited_uses": [
+        "cost/cpo as real untransformed currency",
+        "randomized intervention effects",
+        "unknown propensities treated as known",
+        "post-event fields in prebid features"
+      ],
+      "prior_exposure": "Previously used in AD-DIAG/ContextWeave. Recover lineage; if unavailable after recorded discovery, conservatively flag the entire release potentially exposed and admit only fresh source-verified replication. Never infer virgin rows or reuse old metrics.",
+      "missing_exposure_ledger_disposition": "CONSERVATIVE_FULL_RELEASE_EXPOSURE_REPLICATION_ONLY"
+    },
+    {
+      "id": "criteo_search",
+      "profiles": [
+        "core",
+        "extended"
+      ],
+      "license": "CC-BY-NC-SA-4.0",
+      "purpose": "90-day post-click CVR, conversion-delay and attributed sales-value prediction.",
+      "source_page": "https://ailab.criteo.com/criteo-sponsored-search-conversion-log-dataset/",
+      "acquisition": "landing_page",
+      "landing_link_host": "go.criteo.net",
+      "landing_link_text": "click here",
+      "filename": "criteo_search_source.archive",
+      "expected_sha256": null,
+      "expected_size": null,
+      "approx_download_bytes": 325000000,
+      "max_total_download_bytes": 700000000,
+      "archive_member_expected": "CriteoSearchData",
+      "expected_uncompressed_bytes_approx": 6400000000,
+      "fields_to_audit": [
+        "Sale",
+        "SalesAmountInEuro",
+        "time_delay_for_conversion",
+        "click_timestamp",
+        "nb_clicks_1week",
+        "product_price",
+        "product_age_group",
+        "device_type",
+        "audience_id",
+        "product_gender",
+        "product_brand",
+        "product_category1-7",
+        "product_country",
+        "product_id",
+        "product_title",
+        "partner_id",
+        "user_id"
+      ],
+      "prohibited_uses": [
+        "impression CTR denominator",
+        "hashed title as raw product text",
+        "using delayed outcome before arrival",
+        "post-click CVR transported to another source without assumptions"
+      ],
+      "prior_exposure": "Unknown. Discover locally; do not assert it is new."
+    },
+    {
+      "id": "obd_men",
+      "profiles": [
+        "core",
+        "extended"
+      ],
+      "license": "CC-BY-4.0",
+      "purpose": "External fixed-policy OPE with known propensities; one campaign family, position-conditional primary analysis.",
+      "source_page": "https://huggingface.co/datasets/zozonext/open-bandit",
+      "acquisition": "hf",
+      "repo_id": "zozonext/open-bandit",
+      "files": [
+        {
+          "path": "random/men/men.csv",
+          "expected_sha256": null,
+          "expected_size": null
+        },
+        {
+          "path": "random/men/item_context.csv",
+          "expected_sha256": null,
+          "expected_size": null
+        },
+        {
+          "path": "bts/men/men.csv",
+          "expected_sha256": null,
+          "expected_size": null
+        },
+        {
+          "path": "bts/men/item_context.csv",
+          "expected_sha256": null,
+          "expected_size": null
+        }
+      ],
+      "approx_download_bytes": 1500000000,
+      "max_total_download_bytes": 2000000000,
+      "fields_to_audit": [
+        "action or item_id",
+        "position",
+        "timestamp",
+        "click",
+        "pscore or action_prob",
+        "user features",
+        "item context"
+      ],
+      "prohibited_uses": [
+        "joint-slate OPE from only marginal propensities",
+        "campaign budget intervention claims"
+      ],
+      "prior_exposure": "Unknown after scoped discovery; conservatively potentially exposed. Public-benchmark replication only; no virgin external confirmation claim.",
+      "missing_exposure_ledger_disposition": "CONSERVATIVE_FULL_RELEASE_EXPOSURE_REPLICATION_ONLY"
+    },
+    {
+      "id": "ipinyou",
+      "profiles": [
+        "extended"
+      ],
+      "license": "IPINYOU-NONCOMMERCIAL",
+      "purpose": "Conditional auction-log replay and bid/price-model challenge.",
+      "source_page": "https://contest.ipinyou.com/",
+      "acquisition": "manual",
+      "download_instructions": "Follow official publisher links and review terms. Historical links may require browser interaction. Supply a verified local archive through cache_overrides. Do not substitute a third-party mirror silently.",
+      "max_total_download_bytes": 18000000000,
+      "approx_download_bytes": null,
+      "prohibited_uses": [
+        "unobserved newly won impressions assigned historical labels",
+        "full counterfactual auction claims without assumptions"
+      ],
+      "prior_exposure": "Unknown."
+    }
+  ],
+  "optional_reuse": [
+    "AIX KDD2012 archive/parquet, only if already present with verified hashes",
+    "ESCI ranking artifacts; no new cross-dataset join",
+    "TRACE: future repeated-GMV extension only, not downloaded automatically"
+  ]
+}

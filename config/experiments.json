@@ -1,0 +1,425 @@
+{
+  "version": "2.0",
+  "notes": [
+    "Capabilities can be blocked independently. No synthetic substitution for real evidence.",
+    "E16 summarizes actual terminal outcomes, not a fabricated all-pass.",
+    "E09 synthetic delay adapter qualification does not require external R2 success.",
+    "Independent final freezes prevent agent or policy engineering failure from blocking unrelated empirical confirmation. Source admission publishes per-source capabilities even when another source is blocked."
+  ],
+  "nodes": [
+    {
+      "id": "E00",
+      "name": "inventory_and_execution_contract",
+      "requires": [],
+      "capabilities": [
+        "readonly_host_inventory"
+      ],
+      "scope": "core",
+      "evidence_domain": "design",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E01",
+      "name": "source_admission_and_clock_audit",
+      "requires": [
+        "E00"
+      ],
+      "capabilities": [
+        "admitted_sources"
+      ],
+      "scope": "core",
+      "evidence_domain": "design",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E02",
+      "name": "predictive_model_development",
+      "requires": [
+        "E01"
+      ],
+      "capabilities": [
+        "R1",
+        "GPU_QUALIFIED"
+      ],
+      "scope": "core",
+      "evidence_domain": "R1",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E03",
+      "name": "delay_value_development",
+      "requires": [
+        "E01"
+      ],
+      "capabilities": [
+        "R3",
+        "GPU_QUALIFIED"
+      ],
+      "scope": "core",
+      "evidence_domain": "R3",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E04",
+      "name": "assignment_itt_replication",
+      "requires": [
+        "E01"
+      ],
+      "capabilities": [
+        "R2"
+      ],
+      "scope": "core",
+      "evidence_domain": "R2",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E05",
+      "name": "fixed_policy_ope",
+      "requires": [
+        "E01"
+      ],
+      "capabilities": [
+        "R4"
+      ],
+      "scope": "core",
+      "evidence_domain": "R4",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E06",
+      "name": "conditional_auction_replay",
+      "requires": [
+        "E01"
+      ],
+      "capabilities": [
+        "R5"
+      ],
+      "scope": "extended",
+      "evidence_domain": "R5",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E07",
+      "name": "synthetic_simulator_and_oracle_isolation",
+      "requires": [
+        "E00"
+      ],
+      "capabilities": [
+        "synthetic_generator_contract"
+      ],
+      "scope": "core",
+      "evidence_domain": "S1",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E08",
+      "name": "multi_signal_incident_study",
+      "requires": [
+        "E07"
+      ],
+      "capabilities": [
+        "S1"
+      ],
+      "scope": "core",
+      "evidence_domain": "S1",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E09",
+      "name": "constrained_policy_development",
+      "requires": [
+        "E07",
+        "E08"
+      ],
+      "capabilities": [
+        "S1",
+        "qualified_delay_adapter"
+      ],
+      "scope": "core",
+      "evidence_domain": "S1",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E10_TOOLS",
+      "name": "agent_tool_contracts_and_tasks",
+      "requires": [
+        "E07"
+      ],
+      "capabilities": [
+        "mock_executor"
+      ],
+      "scope": "core",
+      "evidence_domain": "A1",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E10",
+      "name": "single_agent_posttraining",
+      "requires": [
+        "E10_TOOLS"
+      ],
+      "capabilities": [
+        "GPU_QUALIFIED",
+        "verified_reward_code"
+      ],
+      "scope": "core",
+      "evidence_domain": "A1",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E11",
+      "name": "bounded_grpo",
+      "requires": [
+        "E10"
+      ],
+      "capabilities": [
+        "extra_gpu_budget"
+      ],
+      "scope": "extended",
+      "evidence_domain": "A1",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E12",
+      "name": "policy_agent_integration_factorial",
+      "requires": [
+        "E09",
+        "E10"
+      ],
+      "capabilities": [
+        "same_tools_and_guards"
+      ],
+      "scope": "core",
+      "evidence_domain": "S1+A1",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E13_POLICY",
+      "name": "e13_policy_development_ablations",
+      "requires": [
+        "E09"
+      ],
+      "capabilities": [
+        "development_only"
+      ],
+      "scope": "core",
+      "evidence_domain": "S1",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E13_AGENT",
+      "name": "e13_agent_development_ablations",
+      "requires": [
+        "E10"
+      ],
+      "capabilities": [
+        "development_only"
+      ],
+      "scope": "core",
+      "evidence_domain": "A1",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E14",
+      "name": "local_serving_and_recovery",
+      "requires": [
+        "E10_TOOLS"
+      ],
+      "capabilities": [
+        "qualified_small_model",
+        "isolated_load_windows"
+      ],
+      "scope": "core",
+      "evidence_domain": "LOCAL_SYSTEMS",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E15_POLICY_FREEZE",
+      "name": "freeze_policy",
+      "requires": [
+        "E09",
+        "E13_POLICY"
+      ],
+      "capabilities": [
+        "pilot_only_sample_size_decision"
+      ],
+      "scope": "core",
+      "evidence_domain": "S1_LOCK",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E15_AGENT_FREEZE",
+      "name": "freeze_agent",
+      "requires": [
+        "E10",
+        "E13_AGENT"
+      ],
+      "capabilities": [
+        "pilot_only_sample_size_decision"
+      ],
+      "scope": "core",
+      "evidence_domain": "A1_LOCK",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E15_R1_FREEZE",
+      "name": "freeze_r1",
+      "requires": [
+        "E02"
+      ],
+      "capabilities": [
+        "pilot_only_sample_size_decision"
+      ],
+      "scope": "core",
+      "evidence_domain": "R1_LOCK",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E15_R3_FREEZE",
+      "name": "freeze_r3",
+      "requires": [
+        "E03"
+      ],
+      "capabilities": [
+        "pilot_only_sample_size_decision"
+      ],
+      "scope": "core",
+      "evidence_domain": "R3_LOCK",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E15_POLICY",
+      "name": "independent_world_confirmation",
+      "requires": [
+        "E15_POLICY_FREEZE"
+      ],
+      "capabilities": [
+        "new_final_worlds"
+      ],
+      "scope": "core",
+      "evidence_domain": "S1_CONFIRM",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E15_AGENT",
+      "name": "semantic_family_confirmation",
+      "requires": [
+        "E15_AGENT_FREEZE"
+      ],
+      "capabilities": [
+        "heldout_task_families"
+      ],
+      "scope": "core",
+      "evidence_domain": "A1_CONFIRM",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E15_R1",
+      "name": "frozen_r1_confirmation",
+      "requires": [
+        "E15_R1_FREEZE"
+      ],
+      "capabilities": [
+        "admitted_R1",
+        "frozen_model_calibrator_pair"
+      ],
+      "scope": "core",
+      "evidence_domain": "R1_CONFIRM",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E15_R3",
+      "name": "frozen_r3_confirmation",
+      "requires": [
+        "E15_R3_FREEZE"
+      ],
+      "capabilities": [
+        "admitted_R3",
+        "frozen_model_calibrator_pair"
+      ],
+      "scope": "core",
+      "evidence_domain": "R3_CONFIRM",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E15_INTEGRATION",
+      "name": "frozen_2x2_policy_agent_integration",
+      "requires": [
+        "E12",
+        "E15_POLICY_FREEZE",
+        "E15_AGENT_FREEZE"
+      ],
+      "capabilities": [
+        "new_independent_integration_worlds"
+      ],
+      "scope": "core",
+      "evidence_domain": "S1+A1_CONFIRM",
+      "trigger": "requires_valid_inputs",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    },
+    {
+      "id": "E16",
+      "name": "complete_reports_claim_ledger_and_limitations",
+      "requires": [],
+      "capabilities": [
+        "terminal_track_summary"
+      ],
+      "scope": "core",
+      "evidence_domain": "REPORT",
+      "trigger": "all_declared_tracks_terminal",
+      "status": "PLANNED",
+      "scientific_outcome": "NOT_RUN"
+    }
+  ]
+}

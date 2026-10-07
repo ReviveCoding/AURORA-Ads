@@ -1,0 +1,61 @@
+{
+  "checked_date": "2026-09-30",
+  "sources": [
+    {
+      "id": "codex_cli",
+      "url": "https://developers.openai.com/codex/cli/reference",
+      "use": "Interactive CLI, working directory and optional prompt."
+    },
+    {
+      "id": "codex_approval",
+      "url": "https://learn.chatgpt.com/docs/sandboxing/auto-review",
+      "use": "Automatic review does not disable the sandbox or guarantee approval."
+    },
+    {
+      "id": "criteo_search",
+      "url": "https://ailab.criteo.com/criteo-sponsored-search-conversion-log-dataset/",
+      "use": "90-day post-click data, conversion-delay and attributed sales fields; source clock/arrival limitations."
+    },
+    {
+      "id": "criteo_attribution",
+      "url": "https://ailab.criteo.com/criteo-attribution-modeling-bidding-dataset/",
+      "use": "Observed attribution logs and transformed costs."
+    },
+    {
+      "id": "criteo_uplift",
+      "url": "https://ailab.criteo.com/criteo-uplift-prediction-dataset/",
+      "use": "Assignment data, v2.1 and release sampling limitations."
+    },
+    {
+      "id": "obd",
+      "url": "https://arxiv.org/abs/2008.07146",
+      "use": "Logged propensity benchmark and evaluation scope."
+    },
+    {
+      "id": "dr",
+      "url": "https://arxiv.org/abs/1103.4601",
+      "use": "Doubly robust fixed-policy evaluation; not unrestricted sequential identification."
+    },
+    {
+      "id": "delay_feedback",
+      "url": "https://arxiv.org/abs/2002.02068",
+      "use": "Feedback shift correction background."
+    },
+    {
+      "id": "trl_dpo",
+      "url": "https://huggingface.co/docs/trl/dpo_trainer",
+      "use": "DPO/IPO implementation options; exact release must be pinned."
+    },
+    {
+      "id": "trl_grpo",
+      "url": "https://huggingface.co/docs/trl/grpo_trainer",
+      "use": "Optional GRPO loss/reward implementation reference."
+    },
+    {
+      "id": "nvidia_wsl",
+      "url": "https://docs.nvidia.com/cuda/wsl-user-guide/index.html",
+      "use": "WSL CUDA uses the Windows GPU driver."
+    }
+  ],
+  "boundary": "Web metadata is not proof that payloads are downloaded or locally validated. Actual CLI help was also read on the user machine."
+}

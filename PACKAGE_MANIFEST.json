@@ -1,0 +1,193 @@
+{
+  "version": "2.1",
+  "scientific_design_version": "2.0",
+  "status": "DESIGN_READY_WITH_MASTER_PROMPT",
+  "created_date": "2026-09-30",
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 149,
+      "sha256": "42cc534c5c7256426d60c50393b63b1d9d60eeaab821e6002c66627767e5cd94"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 3386,
+      "sha256": "dc21a883a07089828127e9dd8cc479586469af5e997bcece191723e41b721965"
+    },
+    {
+      "path": "DESIGN_KO.md",
+      "bytes": 12936,
+      "sha256": "a381faebbe4b29cd3dcad990753571d2ac356eaeb502eaac27e0b6e9b95879f8"
+    },
+    {
+      "path": "MASTER_PROMPT.md",
+      "bytes": 18391,
+      "sha256": "f65bc9d1d4b67eabf6ba18dd3642938ab7d6d3cd5d4fc85fa487295605d8e6e3"
+    },
+    {
+      "path": "Prepare-Aurora.ps1",
+      "bytes": 9102,
+      "sha256": "4463f473c844b3f6517a166d3c00a13bf8716c35a61c8265b53e49394a5eba2c"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4393,
+      "sha256": "4f406a88bda6da4b11d4d25389e7a998349bba793db23b09fc58bc295746be8b"
+    },
+    {
+      "path": "Start-Aurora.ps1",
+      "bytes": 4997,
+      "sha256": "c415d2560adc44d224540b66512e755a7d0fb599579f756c6d5bac3557b1335d"
+    },
+    {
+      "path": "TEST_REPORT.md",
+      "bytes": 3470,
+      "sha256": "d643894d93baacf7340ed734790c025806f821734b376f3a638428651159e179"
+    },
+    {
+      "path": "WORK_STATE.md",
+      "bytes": 1041,
+      "sha256": "843216ff97e47c975467976ee3f4809bd74f0fe65c0233a9a2651560c5bd1ed7"
+    },
+    {
+      "path": "config/cache_overrides.example.json",
+      "bytes": 407,
+      "sha256": "d0b75a3660430d37243ba4de832eb45a4e5e759b512022fdbae996168755532b"
+    },
+    {
+      "path": "config/contract.json",
+      "bytes": 2904,
+      "sha256": "3bbaecd4326f53c7ac26fa21c7f5422ae6085acb6f2c5062b45236ca1bbdeeee"
+    },
+    {
+      "path": "config/datasets.json",
+      "bytes": 7031,
+      "sha256": "2c23e013f68aa3d1b8291b0b2eafceeeb267a886a67898dfbc7f3365af94a852"
+    },
+    {
+      "path": "config/environment.json",
+      "bytes": 845,
+      "sha256": "3621ac5b812e3739d29767144f768606164368dcee3277308ec4294a6e785989"
+    },
+    {
+      "path": "config/experiments.json",
+      "bytes": 10282,
+      "sha256": "c2e2f6f3657b200ca50bf9e0e4fefe56ea22ae795359c408421e36e1dd85b94e"
+    },
+    {
+      "path": "config/hypotheses.json",
+      "bytes": 1551,
+      "sha256": "41e9c8bb3429328d03a70aab457861321421d596516d1141966395a85407a2c0"
+    },
+    {
+      "path": "config/interface_contracts.json",
+      "bytes": 1658,
+      "sha256": "6cef1c1e196870f8cbe30a05fcf20387739754681c96f3a4daec8c2afcf44a05"
+    },
+    {
+      "path": "config/resources.json",
+      "bytes": 907,
+      "sha256": "cd411d2305a8478f1753e602d956b606d5a39d3f0b20ff2bae37b5bca691f302"
+    },
+    {
+      "path": "config/result_record.template.json",
+      "bytes": 712,
+      "sha256": "4e21745d283b4ecd20e9eb8ebd0affc8e25eb071b7b484999072be934a8ea985"
+    },
+    {
+      "path": "config/simulator.json",
+      "bytes": 1730,
+      "sha256": "b5314ccb73d5496c5ace24acd6fc0982341aeb6b92239929420e3cb7a6635d8c"
+    },
+    {
+      "path": "docs/BASELINE_V1_ARCHIVED.md",
+      "bytes": 40044,
+      "sha256": "e2d41a8dc117da748f8ed4d111c8a0bb48dc36cc31cf5fb32f6c51fa52746bbb"
+    },
+    {
+      "path": "docs/DESIGN_AUDIT_KO.md",
+      "bytes": 6404,
+      "sha256": "6211620214cd7dca4e0b1e568c519a6ea657ae2c3339e13c47d15cac74abcac9"
+    },
+    {
+      "path": "docs/FINAL_SPEC.md",
+      "bytes": 43632,
+      "sha256": "f90be999d6fa7a93d2a519dea2e94aa5460cbc53fd2dc92eaff32fe06b384754"
+    },
+    {
+      "path": "docs/SIMULATOR_CONTRACT.md",
+      "bytes": 8531,
+      "sha256": "b861e24a1f4b2f9b530cefb50f5773c05b777f801d2d7686c60750243db21db1"
+    },
+    {
+      "path": "research/cpu_test_output.txt",
+      "bytes": 3965,
+      "sha256": "f7c766393fa0b06915db48dea0cea851243d18c1ab12c0a8450234afbb985cf0"
+    },
+    {
+      "path": "research/local_environment_observation.json",
+      "bytes": 765,
+      "sha256": "d2fe98c7dc4f7a509e29b57521ab6523cfe998824fcdbc2a8310f7edd494a18d"
+    },
+    {
+      "path": "research/offline_acquisition_plan.json",
+      "bytes": 1055,
+      "sha256": "ee585193cba64ea54cd73fe408439c55a038670ab2d7ded118fa923c981bf115"
+    },
+    {
+      "path": "research/references.json",
+      "bytes": 2175,
+      "sha256": "7a184d7e13ff73c5493758fb56ef9d728762b3a17a97c740f48d9d86111e4228"
+    },
+    {
+      "path": "tests/__pycache__/test_design.cpython-313.pyc",
+      "bytes": 30395,
+      "sha256": "95f703dbe19ae97fdd2174a10886eba4ebe8028ea4a5b7c36607980c58cec9bc"
+    },
+    {
+      "path": "tests/test_design.py",
+      "bytes": 11864,
+      "sha256": "79128c02dbe6fd4b4fdd955df73dec010449e46c83ce9eee73ba11022dc3059d"
+    },
+    {
+      "path": "tools/__pycache__/acquire_data.cpython-313.pyc",
+      "bytes": 32514,
+      "sha256": "11390433a196bd68e538eeeae155c240729ff0dd722bee01edcc9b2a729d3420"
+    },
+    {
+      "path": "tools/__pycache__/contract_reference.cpython-313.pyc",
+      "bytes": 6924,
+      "sha256": "178d68821d60aed49291545bd354ea763ad8eefec10ccd8980cdbf62049e15f9"
+    },
+    {
+      "path": "tools/__pycache__/prepare_runtime.cpython-313.pyc",
+      "bytes": 5700,
+      "sha256": "be1bad0298f30b8798bbf589f70540be3ee6b4ef5b9fbb5671e4622e56847d19"
+    },
+    {
+      "path": "tools/__pycache__/validate_design.cpython-313.pyc",
+      "bytes": 4904,
+      "sha256": "7e4b1dbac681ebc6cb0206ea0755354892a24d85717ff3ea0cdc11b6170f19c8"
+    },
+    {
+      "path": "tools/acquire_data.py",
+      "bytes": 20395,
+      "sha256": "0ce11af515c8f405ffbc0d6e3cf317add6aa372f66552bb4a0761508ceeff53c"
+    },
+    {
+      "path": "tools/contract_reference.py",
+      "bytes": 3704,
+      "sha256": "abc14d16850fca909002da3ebc98964ed2cd639e721acf68ff12cc7b75cd8e0d"
+    },
+    {
+      "path": "tools/prepare_runtime.py",
+      "bytes": 3045,
+      "sha256": "02372c37e2562b023a6b3cead7532f9891ef095e6638ff230a46719ab245e7e0"
+    },
+    {
+      "path": "tools/validate_design.py",
+      "bytes": 2587,
+      "sha256": "c022ef4bcd0fc048219474c4c781010e588f8a9d2fae9ee50ac51d667b5f4eae"
+    }
+  ]
+}

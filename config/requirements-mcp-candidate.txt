@@ -1,0 +1,2 @@
+# Separate small compatibility stage, not yet an executed/qualified SDK lock.
+mcp==1.9.2

@@ -1,0 +1,47 @@
+test_ambiguous_landing_link (test_design.AcquisitionTests.test_ambiguous_landing_link) ... ok
+test_bad_portable_paths (test_design.AcquisitionTests.test_bad_portable_paths) ... ok
+test_full_download_mocked (test_design.AcquisitionTests.test_full_download_mocked) ... ok
+test_https_allowlist (test_design.AcquisitionTests.test_https_allowlist) ... ok
+test_inspect_hash_and_html (test_design.AcquisitionTests.test_inspect_hash_and_html) ... ok
+test_offline_plan_no_network (test_design.AcquisitionTests.test_offline_plan_no_network) ... ok
+test_orphan_partial_preserved (test_design.AcquisitionTests.test_orphan_partial_preserved) ... ok
+test_premature_eof_rejected (test_design.AcquisitionTests.test_premature_eof_rejected) ... ok
+test_quota_failed_read_counted (test_design.AcquisitionTests.test_quota_failed_read_counted) ... ok
+test_range_geometry (test_design.AcquisitionTests.test_range_geometry) ... ok
+test_range_invalid (test_design.AcquisitionTests.test_range_invalid) ... ok
+test_resume_etag_change_refused (test_design.AcquisitionTests.test_resume_etag_change_refused) ... ok
+test_resume_with_hash (test_design.AcquisitionTests.test_resume_with_hash) ... ok
+test_resume_wrong_range_refused (test_design.AcquisitionTests.test_resume_wrong_range_refused) ... ok
+test_safe_relative_normal (test_design.AcquisitionTests.test_safe_relative_normal) ... ok
+test_single_landing_link (test_design.AcquisitionTests.test_single_landing_link) ... ok
+test_source_restart_200 (test_design.AcquisitionTests.test_source_restart_200) ... ok
+test_symlink_rejected (test_design.AcquisitionTests.test_symlink_rejected) ... ok
+test_all_rejected_mass (test_design.ProbabilityTests.test_all_rejected_mass) ... ok
+test_conditional_exp_endpoints (test_design.ProbabilityTests.test_conditional_exp_endpoints) ... ok
+test_conditional_exp_invalid (test_design.ProbabilityTests.test_conditional_exp_invalid) ... ok
+test_conditional_exp_small_rate_limit (test_design.ProbabilityTests.test_conditional_exp_small_rate_limit) ... ok
+test_dr_hand_example (test_design.ProbabilityTests.test_dr_hand_example) ... ok
+test_dr_support_zero (test_design.ProbabilityTests.test_dr_support_zero) ... ok
+test_future_event_rejected (test_design.ProbabilityTests.test_future_event_rejected) ... ok
+test_invalid_mapping (test_design.ProbabilityTests.test_invalid_mapping) ... ok
+test_mass_error (test_design.ProbabilityTests.test_mass_error) ... ok
+test_net_score_all_costs (test_design.ProbabilityTests.test_net_score_all_costs) ... ok
+test_pending_is_not_negative (test_design.ProbabilityTests.test_pending_is_not_negative) ... ok
+test_power_formula_margin (test_design.ProbabilityTests.test_power_formula_margin) ... ok
+test_power_nonfinite (test_design.ProbabilityTests.test_power_nonfinite) ... ok
+test_probability_partition (test_design.ProbabilityTests.test_probability_partition) ... ok
+test_probability_pushforward (test_design.ProbabilityTests.test_probability_pushforward) ... ok
+test_spend_charged_at_zero_scarcity (test_design.ProbabilityTests.test_spend_charged_at_zero_scarcity) ... ok
+test_design_dag_contracts (test_design.RuntimeAndManifestTests.test_design_dag_contracts) ... ok
+test_foreign_runtime_preserved (test_design.RuntimeAndManifestTests.test_foreign_runtime_preserved) ... ok
+test_hash_validation_rejects_tamper (test_design.RuntimeAndManifestTests.test_hash_validation_rejects_tamper) ... ok
+test_low_disk_stops (test_design.RuntimeAndManifestTests.test_low_disk_stops) ... ok
+test_marker_symlink_rejected (test_design.RuntimeAndManifestTests.test_marker_symlink_rejected) ... ok
+test_runtime_idempotent (test_design.RuntimeAndManifestTests.test_runtime_idempotent) ... ok
+test_runtime_owner_conflict (test_design.RuntimeAndManifestTests.test_runtime_owner_conflict) ... ok
+test_runtime_plan_no_write (test_design.RuntimeAndManifestTests.test_runtime_plan_no_write) ... ok
+
+----------------------------------------------------------------------
+Ran 42 tests in 0.014s
+
+OK

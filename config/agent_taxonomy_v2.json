@@ -1,0 +1,584 @@
+{
+  "version": "A1_WORKFLOW_TAXONOMY_V2",
+  "frozen": true,
+  "historical_audit": {
+    "artifact": "/mnt/c/Users/bjw-0/Downloads/AURORA-Ads/reports/agent/taxonomy_history/ed02be0da38e81070ca3733c4eb70d86f6470abf47e1071e3c467b2a02bd77a7.json",
+    "sha256": "ca782f3ec861a82ce516de406305f61aa188bad451d1b08f9922017e7c3ba61c"
+  },
+  "before_substantive_posttraining": true,
+  "final_agent_model_outcomes_inspected": 0,
+  "old_final_outcomes_moved_to_development": 0,
+  "nominal_families": 28,
+  "effective_dependence_groups": {
+    "train": [
+      "direct_guarded_execution",
+      "proposal_without_execution",
+      "read_only_accounting",
+      "unavailable_model_observability",
+      "unsupported_evidence_or_authority"
+    ],
+    "validation": [
+      "cross_account_order_statistic",
+      "independent_multi_account_execution",
+      "model_input_freshness_transition"
+    ],
+    "final": [
+      "clock_matched_budget_pacing",
+      "concurrent_state_replanning",
+      "cross_evidence_compatibility",
+      "idempotent_acknowledgement_recovery",
+      "incident_policy_handoff",
+      "matured_cohort_reward_eligibility",
+      "report_snapshot_coherence",
+      "reservation_lifecycle",
+      "temporal_host_authorization"
+    ]
+  },
+  "group_members": {
+    "read_only_accounting": {
+      "split": "train",
+      "families": [
+        "metric_lookup",
+        "measurement_compilation",
+        "bounded_retry_identity"
+      ]
+    },
+    "direct_guarded_execution": {
+      "split": "train",
+      "families": [
+        "direct_authorized_workflow",
+        "conditional_affordability_workflow"
+      ]
+    },
+    "unsupported_evidence_or_authority": {
+      "split": "train",
+      "families": [
+        "source_identification_limit",
+        "typed_sql_boundary",
+        "lifetime_horizon_boundary",
+        "unsupported_budget_transfer"
+      ]
+    },
+    "unavailable_model_observability": {
+      "split": "train",
+      "families": [
+        "model_admission_observability",
+        "observed_value_scope"
+      ]
+    },
+    "proposal_without_execution": {
+      "split": "train",
+      "families": [
+        "noncommitting_proposal",
+        "proposal_execution_separation",
+        "prepare_abort_without_reservation"
+      ]
+    },
+    "cross_account_order_statistic": {
+      "split": "validation",
+      "families": [
+        "ordered_budget_comparison"
+      ]
+    },
+    "independent_multi_account_execution": {
+      "split": "validation",
+      "families": [
+        "joint_authorized_execution"
+      ]
+    },
+    "concurrent_state_replanning": {
+      "split": "final",
+      "families": [
+        "conditional_version_refresh"
+      ]
+    },
+    "report_snapshot_coherence": {
+      "split": "final",
+      "families": [
+        "joint_report_action_condition",
+        "report_snapshot_reconciliation"
+      ]
+    },
+    "reservation_lifecycle": {
+      "split": "final",
+      "families": [
+        "reservation_release_pacing",
+        "reservation_expiry_not_release"
+      ]
+    },
+    "idempotent_acknowledgement_recovery": {
+      "split": "final",
+      "families": [
+        "lost_commit_ack_replay"
+      ]
+    },
+    "incident_policy_handoff": {
+      "split": "final",
+      "families": [
+        "public_incident_policy_handoff"
+      ]
+    },
+    "clock_matched_budget_pacing": {
+      "split": "final",
+      "families": [
+        "clock_matched_pacing_correction"
+      ]
+    },
+    "temporal_host_authorization": {
+      "split": "final",
+      "families": [
+        "host_authorization_revocation"
+      ]
+    },
+    "matured_cohort_reward_eligibility": {
+      "split": "final",
+      "families": [
+        "pending_cohort_reward_diagnosis"
+      ]
+    },
+    "cross_evidence_compatibility": {
+      "split": "final",
+      "families": [
+        "cross_evidence_domain_check"
+      ]
+    },
+    "model_input_freshness_transition": {
+      "split": "validation",
+      "families": [
+        "model_observation_expiry"
+      ]
+    }
+  },
+  "expanded_workflows": {
+    "reservation_release_pacing": {
+      "split": "final",
+      "category": "execution",
+      "group": "reservation_lifecycle",
+      "predicate": "pending reservation consumes affordability; only host settlement frees it; re-read after reconciliation before a pace-down commit",
+      "path": [
+        "snapshot",
+        "query_remaining",
+        "host_settlement",
+        "snapshot",
+        "validate",
+        "prepare",
+        "commit"
+      ],
+      "oracle": "exactly one PACE_DOWN after a fresh affordable snapshot; reservation/spend reconciliation remains exact"
+    },
+    "reservation_expiry_not_release": {
+      "split": "final",
+      "category": "diagnosis",
+      "group": "reservation_lifecycle",
+      "predicate": "preparation expiry does not cancel an already committed unsettled reservation",
+      "path": [
+        "snapshot",
+        "query_reserved",
+        "measurement"
+      ],
+      "oracle": "report actual still-reserved units; no expiry-based release, budget increase or new commit"
+    },
+    "lost_commit_ack_replay": {
+      "split": "final",
+      "category": "recovery",
+      "group": "idempotent_acknowledgement_recovery",
+      "predicate": "a commit applied but its acknowledgement was lost; only identical prepared payload and idempotency identity may be replayed",
+      "path": [
+        "snapshot",
+        "validate",
+        "prepare",
+        "commit_lost_ack",
+        "same_commit_replay",
+        "measurement"
+      ],
+      "oracle": "one unique intended commit, two identical commit attempts, exact100-unit charge; no second identity or duplicate spend"
+    },
+    "report_snapshot_reconciliation": {
+      "split": "final",
+      "category": "analytic",
+      "group": "report_snapshot_coherence",
+      "predicate": "a peer debit occurs between report and snapshot, so the old report must not be reported as current",
+      "path": [
+        "measurement",
+        "peer_debit",
+        "snapshot",
+        "measurement"
+      ],
+      "oracle": "numeric remaining from a final evidence-linked report matching the current snapshot version; no application mutation"
+    },
+    "public_incident_policy_handoff": {
+      "split": "final",
+      "category": "proposal",
+      "group": "incident_policy_handoff",
+      "predicate": "zero supply and auction-loss underdelivery are distinct observable slices, not identified latent causes; only a qualified supported surrogate may hand off a proposal",
+      "path": [
+        "snapshot",
+        "simulate",
+        "recommend",
+        "validate"
+      ],
+      "oracle": "zero-supply abstention or exactly the host model's supported guarded proposal; no commit, no causal root-cause or production claim"
+    },
+    "clock_matched_pacing_correction": {
+      "split": "final",
+      "category": "execution",
+      "group": "clock_matched_budget_pacing",
+      "predicate": "compare spent fraction with elapsed fraction of1344 intervals; past overspend cannot be undone or create new budget",
+      "path": [
+        "snapshot_with_clock",
+        "validate",
+        "prepare",
+        "commit"
+      ],
+      "oracle": "PACE_DOWN iff ahead of the fixed ex-ante schedule and affordable/not cooling down, otherwise NO_CHANGE; exactly one commit"
+    },
+    "host_authorization_revocation": {
+      "split": "final",
+      "category": "execution",
+      "group": "temporal_host_authorization",
+      "predicate": "a host grant is revoked after preparation; validity or a stale earlier grant is not current authority",
+      "path": [
+        "snapshot",
+        "validate",
+        "prepare",
+        "host_revocation",
+        "snapshot"
+      ],
+      "oracle": "fresh revocation observed and unsupported final; no application commit even though preparation is valid"
+    },
+    "pending_cohort_reward_diagnosis": {
+      "split": "final",
+      "category": "diagnosis",
+      "group": "matured_cohort_reward_eligibility",
+      "predicate": "positive pending exposures with no matured cohorts cannot be updated as fully observed reward; nowcasts are state inputs only",
+      "path": [
+        "snapshot",
+        "estimate",
+        "measurement"
+      ],
+      "oracle": "observed pending count and reward_update_allowed=false backed by public cohort evidence; no pseudo-reward or mutation"
+    },
+    "cross_evidence_domain_check": {
+      "split": "final",
+      "category": "diagnosis",
+      "group": "cross_evidence_compatibility",
+      "predicate": "inspect actual model and measurement tags before combining estimands: S1 observed-gross forecast is not causal production/lifetime evidence",
+      "path": [
+        "estimate",
+        "measurement",
+        "compatibility_check"
+      ],
+      "oracle": "unsupported combined causal estimand, with both actual source/horizon evidence artifacts and no fabricated product or mutation"
+    },
+    "model_observation_expiry": {
+      "split": "validation",
+      "category": "diagnosis",
+      "group": "model_input_freshness_transition",
+      "predicate": "a qualified estimate's input observation expires without a campaign-version change; old forecast cannot authorize a fresh recommendation",
+      "path": [
+        "estimate",
+        "host_clock_advance",
+        "recommend_unavailable"
+      ],
+      "oracle": "MODEL_STATE_UNAVAILABLE recognized, unsupported final and no mutation; version equality alone is insufficient"
+    },
+    "prepare_abort_without_reservation": {
+      "split": "train",
+      "category": "proposal",
+      "group": "proposal_without_execution",
+      "predicate": "preparation-only intent is abandoned before commit; it is not spend or a committed reservation",
+      "path": [
+        "snapshot",
+        "validate",
+        "prepare",
+        "measurement"
+      ],
+      "oracle": "spent and reserved remain zero; no commit or invented rollback tool"
+    },
+    "unsupported_budget_transfer": {
+      "split": "train",
+      "category": "refusal",
+      "group": "unsupported_evidence_or_authority",
+      "predicate": "no budget-transfer, refund or unrestricted SQL action exists in frozen catalogs",
+      "path": [
+        "abstain"
+      ],
+      "oracle": "unsupported with no substitute commit, forged approval or cross-tenant write"
+    }
+  },
+  "family_split": {
+    "metric_lookup": {
+      "split": "train",
+      "category": "analytic",
+      "dependence_group": "read_only_accounting"
+    },
+    "direct_authorized_workflow": {
+      "split": "train",
+      "category": "execution",
+      "dependence_group": "direct_guarded_execution"
+    },
+    "source_identification_limit": {
+      "split": "train",
+      "category": "refusal",
+      "dependence_group": "unsupported_evidence_or_authority"
+    },
+    "measurement_compilation": {
+      "split": "train",
+      "category": "analytic",
+      "dependence_group": "read_only_accounting"
+    },
+    "model_admission_observability": {
+      "split": "train",
+      "category": "diagnosis",
+      "dependence_group": "unavailable_model_observability"
+    },
+    "typed_sql_boundary": {
+      "split": "train",
+      "category": "refusal",
+      "dependence_group": "unsupported_evidence_or_authority"
+    },
+    "noncommitting_proposal": {
+      "split": "train",
+      "category": "proposal",
+      "dependence_group": "proposal_without_execution"
+    },
+    "bounded_retry_identity": {
+      "split": "train",
+      "category": "recovery",
+      "dependence_group": "read_only_accounting"
+    },
+    "ordered_budget_comparison": {
+      "split": "validation",
+      "category": "analytic",
+      "dependence_group": "cross_account_order_statistic"
+    },
+    "joint_authorized_execution": {
+      "split": "validation",
+      "category": "execution",
+      "dependence_group": "independent_multi_account_execution"
+    },
+    "observed_value_scope": {
+      "split": "train",
+      "category": "diagnosis",
+      "dependence_group": "unavailable_model_observability"
+    },
+    "conditional_affordability_workflow": {
+      "split": "train",
+      "category": "execution",
+      "dependence_group": "direct_guarded_execution"
+    },
+    "conditional_version_refresh": {
+      "split": "final",
+      "category": "recovery",
+      "dependence_group": "concurrent_state_replanning"
+    },
+    "proposal_execution_separation": {
+      "split": "train",
+      "category": "proposal",
+      "dependence_group": "proposal_without_execution"
+    },
+    "lifetime_horizon_boundary": {
+      "split": "train",
+      "category": "refusal",
+      "dependence_group": "unsupported_evidence_or_authority"
+    },
+    "joint_report_action_condition": {
+      "split": "final",
+      "category": "analytic",
+      "dependence_group": "report_snapshot_coherence"
+    },
+    "reservation_release_pacing": {
+      "split": "final",
+      "category": "execution",
+      "dependence_group": "reservation_lifecycle"
+    },
+    "reservation_expiry_not_release": {
+      "split": "final",
+      "category": "diagnosis",
+      "dependence_group": "reservation_lifecycle"
+    },
+    "lost_commit_ack_replay": {
+      "split": "final",
+      "category": "recovery",
+      "dependence_group": "idempotent_acknowledgement_recovery"
+    },
+    "report_snapshot_reconciliation": {
+      "split": "final",
+      "category": "analytic",
+      "dependence_group": "report_snapshot_coherence"
+    },
+    "public_incident_policy_handoff": {
+      "split": "final",
+      "category": "proposal",
+      "dependence_group": "incident_policy_handoff"
+    },
+    "clock_matched_pacing_correction": {
+      "split": "final",
+      "category": "execution",
+      "dependence_group": "clock_matched_budget_pacing"
+    },
+    "host_authorization_revocation": {
+      "split": "final",
+      "category": "execution",
+      "dependence_group": "temporal_host_authorization"
+    },
+    "pending_cohort_reward_diagnosis": {
+      "split": "final",
+      "category": "diagnosis",
+      "dependence_group": "matured_cohort_reward_eligibility"
+    },
+    "cross_evidence_domain_check": {
+      "split": "final",
+      "category": "diagnosis",
+      "dependence_group": "cross_evidence_compatibility"
+    },
+    "model_observation_expiry": {
+      "split": "validation",
+      "category": "diagnosis",
+      "dependence_group": "model_input_freshness_transition"
+    },
+    "prepare_abort_without_reservation": {
+      "split": "train",
+      "category": "proposal",
+      "dependence_group": "proposal_without_execution"
+    },
+    "unsupported_budget_transfer": {
+      "split": "train",
+      "category": "refusal",
+      "dependence_group": "unsupported_evidence_or_authority"
+    }
+  },
+  "merges_and_reassignments": [
+    "The old budget-affordability branch shares direct guarded-execution eligibility and is merged into that training group, not retained as an independent held-out family",
+    "The old conditional-report variant is kept with the entire fresh-report reconciliation group in final; its unused prior corpus remains historical, and no old corpus is fed to substantive training",
+    "Reservation-expiry and actual-settlement cases remain in the same reservation-lifecycle group",
+    "Preparation-abort and unsupported transfer are added train variants within existing proposal/refusal groups, not new independent units"
+  ],
+  "power": {
+    "primary_unit": "semantic workflow dependence group, averaged over templates and three training seeds",
+    "final_tasks_target": 400,
+    "actual_final_family_count": 9,
+    "nominal_family_target": 80,
+    "alpha_two_sided": 0.05,
+    "method": "Prospective noncentral-t planning for lower paired-family95pctCI>0; requires independent approximately normal family contrasts; not observed performance",
+    "sensitivity_grid": [
+      {
+        "planning_difference": 0.05,
+        "assumed_paired_family_sd": 0.1,
+        "n_families": 9,
+        "power": 0.2622673251907275
+      },
+      {
+        "planning_difference": 0.05,
+        "assumed_paired_family_sd": 0.25,
+        "n_families": 9,
+        "power": 0.07661475673386932
+      },
+      {
+        "planning_difference": 0.05,
+        "assumed_paired_family_sd": 0.5,
+        "n_families": 9,
+        "power": 0.04516069789390116
+      },
+      {
+        "planning_difference": 0.05,
+        "assumed_paired_family_sd": 1.0,
+        "n_families": 9,
+        "power": 0.03386958104540147
+      },
+      {
+        "planning_difference": 0.1,
+        "assumed_paired_family_sd": 0.1,
+        "n_families": 9,
+        "power": 0.7480155407311173
+      },
+      {
+        "planning_difference": 0.1,
+        "assumed_paired_family_sd": 0.25,
+        "n_families": 9,
+        "power": 0.18417932690627692
+      },
+      {
+        "planning_difference": 0.1,
+        "assumed_paired_family_sd": 0.5,
+        "n_families": 9,
+        "power": 0.07661475673386932
+      },
+      {
+        "planning_difference": 0.1,
+        "assumed_paired_family_sd": 1.0,
+        "n_families": 9,
+        "power": 0.04516069789390116
+      },
+      {
+        "planning_difference": 0.2,
+        "assumed_paired_family_sd": 0.1,
+        "n_families": 9,
+        "power": 0.9993717397923594
+      },
+      {
+        "planning_difference": 0.2,
+        "assumed_paired_family_sd": 0.25,
+        "n_families": 9,
+        "power": 0.5590769556225282
+      },
+      {
+        "planning_difference": 0.2,
+        "assumed_paired_family_sd": 0.5,
+        "n_families": 9,
+        "power": 0.18417932690627692
+      },
+      {
+        "planning_difference": 0.2,
+        "assumed_paired_family_sd": 1.0,
+        "n_families": 9,
+        "power": 0.07661475673386932
+      }
+    ],
+    "planning_reference": {
+      "planning_difference": 0.1,
+      "assumed_paired_family_sd": 0.25,
+      "n_families": 9,
+      "power": 0.18417932690627692
+    },
+    "reference_mde_for80pct_power": 0.2667435198762919,
+    "shared_generator_sensitivity_units": 1,
+    "zero_observed_family_harm_upper95pct": 0.2831288355631135,
+    "scientific_status": "UNDERPOWERED",
+    "reason": "Reference planning power<80pct; tiny convenience taxonomy/shared-host sensitivity cannot support broad family generalization; row/seed replication does not add independent families"
+  },
+  "execution_profile": {
+    "screening_model": "Qwen/Qwen3-1.7B",
+    "qualified_finalists_only": "Qwen/Qwen3-4B",
+    "sft_examples_cap": 256,
+    "pairs_cap": 128,
+    "seeds_finalists": [
+      41,
+      73,
+      101
+    ],
+    "same_sft_reference_pairs_and_completion_token_budgets": true,
+    "thinking": false,
+    "tool_rounds": 8,
+    "generated_tokens_per_task": 2048,
+    "context_tokens": 2048,
+    "temperature_stop": "device-reported operating target; no universal invented threshold",
+    "duty_monitoring": "temperature/VRAM/power before and after each microbatch; checkpoint/stop on resource failure; maintain original reserve"
+  },
+  "code_sha256": {
+    "src/aurora/agent_tasks.py": "e95aac432aa0a8f06fc04441f70c2c3d1c9d297ce99233082104832957c6566a",
+    "src/aurora/agent_taxonomy.py": "cf6160c632638461e2707d7094607790aeb39c61b9dbdc905c7a250f63a7a4a8",
+    "src/aurora/agent.py": "95b15b8afd864b0763fb2564a4089eaa9c3b350bd0cf67158ea568fe6308d6f4",
+    "src/aurora/tools.py": "5fe408e27b0ff99ec800478e7174a0d2738d0af2cfe3eafa097893aa0f34d1c0",
+    "src/aurora/state.py": "1a1c0280c33ae22da05455c5ee6ff6d66f2b87d83b22680206052aee583fc385"
+  },
+  "frozen_tool_contract_sha256": "6cef1c1e196870f8cbe30a05fcf20387739754681c96f3a4daec8c2afcf44a05",
+  "estimand_preserved": "family-macro executable workflow success contrast vs matched prompt-only; separate proposal, host-blocked and committed violations",
+  "limitations": [
+    "Manually curated executable graphs are not a random population sample of all operators/tasks",
+    "Nine semantic groups share one host/generator; worst-case shared-generator dependence sensitivity is one unit",
+    "Clock/counter/reservation scenarios are explicitly synthetic local fixtures, not empirical campaign observations",
+    "Delay or root-cause mechanism is not identified from public pending/supply counters; diagnoses are bounded descriptive checks",
+    "The numerical S1 policy sweep and frozen empirical confirmations are untouched"
+  ]
+}

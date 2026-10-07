@@ -1,0 +1,17 @@
+{
+  "version": "S1_BLOCKS_V1",
+  "status": "PRE_POLICY_FINAL_DECLARATION",
+  "catalog_world_key": "AURORA_PARAMETER_CATALOG_V1",
+  "catalog_size": 80,
+  "stage_blocks": {"train": [0, 16], "validation": [16, 32], "calibration": [32, 48], "final": [48, 64], "pilot": [64, 80]},
+  "organic_campaign_shock_bounds": [-0.03, 0.03],
+  "segment_offset_bounds": [-0.2, 0.2],
+  "weak_campaign_delta_values": [-0.25, 0, 0.25],
+  "draws": "Per-catalog-block Philox counter keys; each whole eight-campaign organic-shock/weak-effect block and segment-offset block belongs to only one stage. Reference equations/constants otherwise unchanged.",
+  "family_weights": [0.25, 0.25, 0.25, 0.25],
+  "budget_mixture": [4000, 10000, 20000],
+  "ood_mechanisms": ["nonlinear_feature_change", "stronger_fatigue", "value_dependent_reporting_loss", "supply_collapse", "additive_misspecified"],
+  "ood_not_primary_mixture": true,
+  "predeclared_qualification_controls": {"null_worlds": 16, "positive_negative_worlds": 8, "independent_parametric_ci_trials": 2000, "primary_families_full_horizon": 4},
+  "limitations": "Entire parameter blocks are disjoint, not inferred from seeds. In-mixture final retains the declared four families. OOD changes whole functional mechanisms absent from fitting, separately reported. These are synthetic assumptions, not public-data causal anchors."
+}

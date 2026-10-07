@@ -1,0 +1,15 @@
+{
+  "version": "S1_INCIDENT_V1_PRE_SELECTION",
+  "public_features": "src/aurora/incidents.py::FEATURE_NAMES",
+  "prediction_endpoint": "Declared synthetic joint incident state, not identified causal root cause",
+  "labels": {"0": "nominal", "1": "declared competition shift", "2": "competition plus temporary reporting lag"},
+  "alarm_threshold_grid": [0.2, 0.4, 0.6, 0.8],
+  "selection_cost": {"missed_incident_interval": 1.0, "unnecessary_alarm_interval": 0.01, "unit": "declared synthetic decision-loss units, NOT measured purchase/production cost"},
+  "selection": "world-macro declared decision cost; all methods use same thresholds/costs",
+  "train_worlds": 4,
+  "calibration_worlds": 4,
+  "selection_worlds": 4,
+  "diagnostic_evaluation_worlds": 4,
+  "same_world_campaigns_not_independent": true,
+  "policy_completed_utility_effect": "Measured later in component-fixed policy ablations, not claimed from detector classification"
+}

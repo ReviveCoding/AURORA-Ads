@@ -1,0 +1,103 @@
+{
+  "version": "2.0",
+  "status": "DESIGN_READY_FOR_IMPLEMENTATION",
+  "design_date": "2026-09-30",
+  "application_agents": 1,
+  "tot_enabled": false,
+  "multi_agent_enabled": false,
+  "live_ads_writes": false,
+  "repo_windows": "C:\\Users\\bjw-0\\Downloads\\AURORA-Ads",
+  "wsl_distribution": "Ubuntu-22.04",
+  "runtime_wsl_template": "$HOME/.local/share/aurora-ads",
+  "heavy_gpu_jobs": 1,
+  "codex": {
+    "interactive": true,
+    "initial_prompt": null,
+    "preferred_flag": "--approve-for-me",
+    "observed_version": "0.155.1",
+    "observed_powershell": "7.6.6",
+    "strict_config": true,
+    "global_config_changes": false,
+    "full_access_fallback": false
+  },
+  "primary_r3": {
+    "horizon_days": 7,
+    "model_snapshot_day": 41,
+    "training_origin_interval": [
+      0,
+      41
+    ],
+    "calibration_origin_interval": [
+      41,
+      47
+    ],
+    "calibrator_available_day": 54,
+    "selection_origin_interval": [
+      54,
+      60
+    ],
+    "selection_labels_available_day": 67,
+    "freeze_day": 70,
+    "final_origin_interval": [
+      70,
+      82
+    ],
+    "final_mature_by_day": 89,
+    "interval_convention": "half_open",
+    "refit_at_freeze": false,
+    "received_at_assumption": "click_timestamp+conversion_delay; reporting lag unavailable"
+  },
+  "policy": {
+    "name": "MSCP-v2",
+    "primary_estimator": "paired_world_mean",
+    "primary_value": "(unique_purchase_value-no_ad_purchase_value-spend-operational_cost)/initial_budget",
+    "score": "gross_value-(1+scarcity_dual)*spend-operational_cost-beta*uncertainty",
+    "pseudo_reward_updates_primary": false,
+    "controller_interval_minutes": 15,
+    "decision_days": 14,
+    "maturation_flush_days": 7,
+    "campaigns_per_world": 8,
+    "practical_margin_normalized": 0.01,
+    "planning_alternative_normalized": 0.02,
+    "pilot_worlds": 20,
+    "final_worlds_min": 40,
+    "final_worlds_max": 200,
+    "stochastic_logger_epsilon": 0.1,
+    "action_duration_intervals": 1,
+    "budget_creation_allowed": false,
+    "one_step_dr_for_adaptive_episode": false,
+    "posterior_update_unit": "fully matured origin-interval cohort"
+  },
+  "agent": {
+    "development_model": "Qwen/Qwen3-1.7B",
+    "final_model": "Qwen/Qwen3-1.7B",
+    "optional_finalist_transfer_model": "Qwen/Qwen3-4B",
+    "final_model_scope": "v2.1: qualified1.7B closure by default; optional4B selected-recipe-only transfer before final outcomes",
+    "revision": "RESOLVE_AND_PIN_BEFORE_TRAINING",
+    "sft_examples_cap": 8000,
+    "preference_pairs_cap": 2000,
+    "final_tasks_target": 400,
+    "final_semantic_families_target": 80,
+    "tool_rounds_max": 8,
+    "initial_context_tokens": 1024,
+    "task_generated_tokens_max": 2048,
+    "primary_variants": [
+      "prompt_only",
+      "sft",
+      "sft_dpo",
+      "sft_ipo"
+    ],
+    "optional_variants": [
+      "sft_grpo"
+    ],
+    "human_labels_status": "NOT_COLLECTED"
+  },
+  "blocked_until_implementation": [
+    "data_payload_admission",
+    "dependency_lock",
+    "cuda_health_qualification",
+    "training",
+    "protected_evaluation",
+    "production_claims"
+  ]
+}

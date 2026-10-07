@@ -1,0 +1,18 @@
+{
+  "version": "A1_BOUNDED_RECIPE_PROFILE_V1",
+  "timing": "After prospective taxonomy freeze and first SFT launch; before any DPO/IPO training or model recipe scoring",
+  "sft_examples_cap": 256,
+  "preference_pairs_cap": 32,
+  "selection": "Deterministic round-robin corpus prefix; identical pairs and completion-token budgets for DPO/IPO and finalist seeds",
+  "qualification_microbatches": 16,
+  "duty_pause_seconds": 30,
+  "development_model": "Qwen3-1.7B",
+  "development_seed": 41,
+  "finalist_model": "Qwen3-4B",
+  "finalist_seeds": [41, 73, 101],
+  "transfer_rule": "Operationally qualified development-selected learned recipe plus its qualified SFT reference; prompt-only remains a candidate",
+  "allocation_cap_hours": 36,
+  "scope": "Implementation compute profile only; no change to H_agent, its nine final dependence groups, guards, context, inference rule or UNDERPOWERED designation",
+  "preserve": "Existing running SFT uses256 examples unchanged. Its unused preference-cap128 metadata is historical; no preference training has used that cap.",
+  "reason": "Each preference pair requires separate frozen-reference and sequential recomputation calls under monitored duty pauses. A128-pair grid risks exhausting the unchanged36h allocation before three-seed finalist execution. Prefix32 is fixed prospectively, not chosen from agent outcomes."
+}

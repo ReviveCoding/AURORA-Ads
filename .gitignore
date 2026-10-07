@@ -1,0 +1,53 @@
+# Local runtime and environments
+.local/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Secrets and machine-local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Data, models, checkpoints, and generated runtime state
+data/
+runs/
+checkpoints/
+outputs/
+reports/
+extensions/
+*.safetensors
+*.pt
+*.bin
+*.parquet
+*.duckdb
+*.sqlite*
+*.joblib
+*.npz
+
+# Logs, temp, OS/editor files
+*.log
+*.tmp
+*.bak
+*.bak-*
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Node/build artifacts
+node_modules/
+dist/
+build/
+*.egg-info/
+
+# Release assets generated locally
+release-assets/

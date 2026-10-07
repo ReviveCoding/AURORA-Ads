@@ -1,0 +1,20 @@
+{
+  "date": "2026-09-30",
+  "method": "Remote Desktop Commander read-only native commands",
+  "powershell": "7.6.6",
+  "codex_cli": "0.155.1",
+  "codex_help_approve_for_me": "Route approval requests through automatic review using the workspace-write sandbox",
+  "strict_config_supported": true,
+  "wsl_distributions": {
+    "Ubuntu-22.04": 2,
+    "docker-desktop": 2
+  },
+  "gpu_name": "NVIDIA GeForce RTX 4090 Laptop GPU",
+  "gpu_total_mib": 16376,
+  "gpu_used_mib_at_snapshot": 1737,
+  "gpu_temperature_c_at_snapshot": 77,
+  "repo_existed_at_snapshot": false,
+  "gpu_health_qualified": false,
+  "changes_made_by_inventory": false,
+  "limitations": "Inventory only. No account secrets, config contents, model execution, thermal stress or ML training inspected."
+}
