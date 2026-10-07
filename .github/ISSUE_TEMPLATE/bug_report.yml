@@ -1,0 +1,51 @@
+name: Bug report
+description: Report a reproducible software or workflow defect
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a defect. Do not include secrets, restricted data, or security-sensitive exploit details here.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction
+      description: Minimal steps, command, and inputs needed to reproduce the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: input
+    id: commit
+    attributes:
+      label: Commit or release
+      placeholder: v1.0.0 or commit SHA
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python version, CPU/GPU if relevant, and dependency details.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Redact secrets, local identifiers, restricted data, and private paths where necessary.
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: This report does not contain secrets, restricted data, or a security-sensitive vulnerability.
+          required: true

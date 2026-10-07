@@ -45,3 +45,9 @@ jobs:
 
       - name: Validate design
         run: python tools/validate_design.py --no-hashes
+
+      - name: Dependency consistency
+        run: python -m pip check
+
+      - name: Package import smoke test
+        run: python -c "import aurora; print('aurora import OK')"

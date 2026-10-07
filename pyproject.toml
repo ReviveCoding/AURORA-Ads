@@ -11,6 +11,23 @@ requires-python = ">=3.11"
 authors = [
   { name = "Jinwoo Bae" }
 ]
+keywords = [
+  "agentic-ai",
+  "advertising",
+  "calibration",
+  "causal-inference",
+  "delayed-conversion",
+  "model-risk",
+  "off-policy-evaluation",
+  "reproducibility",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 dependencies = [
   "numpy>=1.26",
   "scipy>=1.11",
@@ -38,6 +55,8 @@ dev = [
 [project.urls]
 Homepage = "https://github.com/ReviveCoding/AURORA-Ads"
 Repository = "https://github.com/ReviveCoding/AURORA-Ads"
+Documentation = "https://github.com/ReviveCoding/AURORA-Ads/tree/main/docs"
+Changelog = "https://github.com/ReviveCoding/AURORA-Ads/blob/main/CHANGELOG.md"
 Issues = "https://github.com/ReviveCoding/AURORA-Ads/issues"
 
 [tool.setuptools.packages.find]
