@@ -31,7 +31,8 @@ dev = [
   "pytest>=8.0",
   "ruff>=0.6",
   "torch>=2.4",
-  "transformers>=4.48"
+  "transformers>=4.48",
+  "mcp>=1.9"
 ]
 
 [project.urls]
