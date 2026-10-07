@@ -8,6 +8,7 @@
 - added structured bug/research issue forms, pull-request template, and CODEOWNERS
 - enabled Dependabot configuration and private vulnerability reporting
 - added package metadata plus CI dependency/import integrity checks
+- modernized GitHub Actions to Node 24-compatible v7 actions and pinned Ubuntu 24.04 for runner stability
 
 ## v1.0.0 - 2026-10-07
 
