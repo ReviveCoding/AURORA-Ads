@@ -1,0 +1,68 @@
+{
+  "schema_version": "2.0",
+  "single_agent": true,
+  "max_tool_rounds": 8,
+  "response_required": [
+    "evidence_domain",
+    "snapshot_version",
+    "unit",
+    "horizon",
+    "artifact_id",
+    "permitted_use"
+  ],
+  "tools": [
+    {
+      "name": "get_campaign_snapshot",
+      "mutation": "NO_LIVE_MUTATION",
+      "special_rule": "declared evidence only"
+    },
+    {
+      "name": "query_metrics",
+      "mutation": "NO_LIVE_MUTATION",
+      "special_rule": "parameterized allowlist SQL only"
+    },
+    {
+      "name": "estimate_outcomes",
+      "mutation": "NO_LIVE_MUTATION",
+      "special_rule": "declared evidence only"
+    },
+    {
+      "name": "simulate_policy",
+      "mutation": "NO_LIVE_MUTATION",
+      "special_rule": "declared evidence only"
+    },
+    {
+      "name": "recommend_action",
+      "mutation": "NO_LIVE_MUTATION",
+      "special_rule": "declared evidence only"
+    },
+    {
+      "name": "validate_action",
+      "mutation": "NO_LIVE_MUTATION",
+      "special_rule": "declared evidence only"
+    },
+    {
+      "name": "prepare_action",
+      "mutation": "PREPARE_ONLY",
+      "special_rule": "declared evidence only"
+    },
+    {
+      "name": "commit_mock_action",
+      "mutation": "MOCK_COMMIT",
+      "special_rule": "host-issued authorization; tenant/version/payload/expiry/idempotency checks"
+    },
+    {
+      "name": "build_measurement_report",
+      "mutation": "NO_LIVE_MUTATION",
+      "special_rule": "declared evidence only"
+    }
+  ],
+  "prohibited": [
+    "live_ad_api",
+    "arbitrary_shell",
+    "arbitrary_url_fetch",
+    "LLM_forged_approval",
+    "unrestricted_SQL",
+    "cross_tenant_access"
+  ]
+}

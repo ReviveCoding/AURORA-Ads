@@ -1,0 +1,6 @@
+{
+  "criteo_uplift/criteo-research-uplift-v2.1.csv.gz": "/absolute/path/to/existing/criteo-research-uplift-v2.1.csv.gz",
+  "criteo_attribution/criteo_attribution_dataset.tsv.gz": "/absolute/path/to/existing/criteo_attribution_dataset.tsv.gz",
+  "criteo_search/criteo_search_source.archive": "/absolute/path/to/existing/source_archive",
+  "ipinyou/source": "/absolute/path/to/official/ipinyou_archive.zip"
+}

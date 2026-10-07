@@ -1,0 +1,33 @@
+{
+  "native_controller": "PowerShell7+nativeCodex",
+  "observed_codex": "0.155.1",
+  "wsl": "Ubuntu-22.04",
+  "python_target": "3.11 or 3.12 chosen by compatible resolved wheel set",
+  "actual_python_version": "DISCOVER_NOT_INSTALLED_BY_PREPARATION",
+  "dependency_lock_status": "PENDING_RUNTIME_QUALIFICATION",
+  "core": [
+    "numpy",
+    "scipy",
+    "pandas",
+    "pyarrow",
+    "duckdb",
+    "scikit-learn",
+    "xgboost",
+    "torch",
+    "transformers",
+    "peft",
+    "accelerate",
+    "trl",
+    "bitsandbytes",
+    "fastapi",
+    "pydantic",
+    "pytest",
+    "matplotlib"
+  ],
+  "optional": [
+    "vllm",
+    "pyspark"
+  ],
+  "pin_policy": "isolate env; resolve once, smoke-test, export exact locks/hashes; no latest sweep",
+  "gpu_probe_policy": "no compute until authorized bounded qualification; inventory is not qualification"
+}

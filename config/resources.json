@@ -1,0 +1,30 @@
+{
+  "status": "PROPOSAL_REQUIRES_LOCAL_QUALIFICATION",
+  "gpu_heavy_concurrency": 1,
+  "cpu_workers_initial": 2,
+  "cpu_workers_max": 4,
+  "gpu_planned_peak_gib": 12,
+  "gpu_headroom_gib": 2,
+  "host_app_ram_target_gib": 20,
+  "storage_growth_ceiling_gib": 60,
+  "backing_disk_min_free_gib": 20,
+  "max_core_download_gib": 5,
+  "gpu_hours_caps": {
+    "prediction_delay_causal": 24,
+    "policy": 12,
+    "agent": 36,
+    "evaluation_systems": 12,
+    "optional_grpo": 12
+  },
+  "no_gpu_autostart_in_preparation": true,
+  "no_retry_after_device_loss_or_hard_shutdown": true,
+  "no_global_driver_bios_power_changes": true,
+  "no_silent_cpu_training_fallback": true,
+  "gpu_temperature_limit": "must be set from current device guidance and qualified envelope, not guessed",
+  "observed_gpu_readonly": {
+    "total_mib": 16376,
+    "used_mib": 1737,
+    "temperature_c": 77,
+    "health_verified": false
+  }
+}

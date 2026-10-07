@@ -1,0 +1,47 @@
+{
+  "version": "2.0",
+  "status": "INITIAL_DESIGN_CONSTANTS_NOT_MEASURED",
+  "primary": {
+    "campaigns": 8,
+    "decision_days": 14,
+    "interval_minutes": 15,
+    "conversion_horizon_days": 7,
+    "nominal_opportunities_per_campaign_interval": 32,
+    "arrival_process": "Poisson intensity with predeclared shared shocks",
+    "expected_opportunities_per_world_nominal": 344064,
+    "budgets_per_campaign_synthetic_units": {
+      "tight": 4000,
+      "balanced": 10000,
+      "loose": 20000
+    },
+    "budget_regime_selection": "uniform prior mixture fixed before final; not selected from final realized opportunities",
+    "price_base": "positive lognormal, median one synthetic cost unit; parameter ranges fixed in development contract",
+    "purchase_value_unit": "same synthetic cost units, independent value generator; no real currency claim"
+  },
+  "rng": {
+    "key_fields": [
+      "world_id",
+      "opportunity_id",
+      "channel_id"
+    ],
+    "action_order_dependent_stream": false,
+    "reuse_between_arms": "common exogenous draws only",
+    "oracle_visible_to_learner": false
+  },
+  "family_weights": {
+    "weak_or_no_heterogeneity": 0.25,
+    "nonlinear_heterogeneity": 0.25,
+    "fatigue_carryover": 0.25,
+    "reporting_competition_shift": 0.25
+  },
+  "freeze_required": [
+    "parameter_ranges",
+    "value_scale",
+    "missingness_process",
+    "organic_and_paid_unique_purchase_logic",
+    "operational_costs",
+    "budget_regime_mixture",
+    "source_anchor_hashes"
+  ],
+  "implementation_note": "No Python loop over every event for GPU workloads. Vectorize within campaign/interval while preserving exact sequential budget settlement. Clock/ledger behavior must agree with a small CPU reference."
+}

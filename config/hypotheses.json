@@ -1,0 +1,39 @@
+{
+  "status": "PRE_EXECUTION_DESIGN_NOT_RESULTS",
+  "H_policy": {
+    "domain": "S1",
+    "estimand": "paired_mean_completed_episode_normalized_net_value_difference",
+    "comparator": "best_validation_selected_conventional",
+    "practical_margin": 0.01,
+    "claim_rule": "lower_two_sided_95pct_CI > practical_margin",
+    "planning_alternative": 0.02,
+    "pilot_worlds": 20,
+    "final_worlds": [
+      40,
+      200
+    ],
+    "independent_unit": "world"
+  },
+  "H_agent": {
+    "domain": "A1",
+    "estimand": "family_macro_executable_success_difference",
+    "comparator": "prompt_only_same_tools_guards_context",
+    "claim_rule": "lower_paired_family_cluster_95pct_CI > 0",
+    "guardrail": "Report harmful proposals, prevented violations and commits separately. Zero observed events must not produce a zero-width population-risk interval.",
+    "zero_event_bound": "Exact binomial one-sided bound on independent family-any-harm indicators, labeled as family-level risk; not a per-call binomial claim.",
+    "target_tasks": 400,
+    "target_families": 80,
+    "training_seed_count_finalists": 3
+  },
+  "H_delay": {
+    "domain": "R3",
+    "estimand": "matured_7day_conversion_logloss_difference",
+    "comparator": "best_validation_selected_mature_only",
+    "temporal_pair": "M41+C54",
+    "evaluation_origin_half_open": [
+      70,
+      82
+    ]
+  },
+  "interpretation": "Practical margin is a project choice, not achieved performance. Pre-test amendments require versioned rationale; final outcome inspection cannot change thresholds."
+}
