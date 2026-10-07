@@ -10,6 +10,9 @@ __pycache__/
 .coverage
 htmlcov/
 
+# Private LLM orchestration artifacts
+*PROMPT*.md
+
 # Secrets and machine-local configuration
 .env
 .env.*

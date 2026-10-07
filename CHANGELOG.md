@@ -9,6 +9,7 @@
 - enabled private vulnerability reporting and a low-noise monthly grouped Dependabot policy
 - added package metadata plus CI dependency/import integrity checks
 - modernized GitHub Actions to Node 24-compatible v7 actions and pinned Ubuntu 24.04 for runner stability
+- removed internal LLM/Codex orchestration prompts from the public tree and rewritten public Git history; benchmark task definitions remain for scientific reproducibility
 
 ## v1.0.0 - 2026-10-07
 

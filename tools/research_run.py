@@ -40,7 +40,7 @@ def main() -> int:
     # imported tool helpers as well as the launch script. Earlier runs retain
     # their original hash-only provenance; do not imply retroactive archives.
     paths = {*sorted((ROOT / "src/aurora").glob("*.py")), *sorted((ROOT / "tools").glob("*.py")), *sorted((ROOT / "config").glob("*.json"))}
-    paths.update(ROOT / relative for relative in ("AGENTS.md", "WORK_STATE.md", "docs/FINAL_SPEC.md", "docs/SIMULATOR_CONTRACT.md", "DESIGN_KO.md", "docs/DESIGN_AUDIT_KO.md", "TEST_REPORT.md"))
+    paths.update(ROOT / relative for relative in ("WORK_STATE.md", "docs/FINAL_SPEC.md", "docs/SIMULATOR_CONTRACT.md", "DESIGN_KO.md", "docs/DESIGN_AUDIT_KO.md", "TEST_REPORT.md"))
     lock = ROOT / "reports/environment/ENVIRONMENT_LOCK.json"
     if not lock.exists():
         lock = ROOT / "reports/environment/CPU_LOCK.json"
