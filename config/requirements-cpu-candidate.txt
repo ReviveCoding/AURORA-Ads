@@ -1,7 +1,7 @@
 # Finite candidate set, not a qualified environment lock.
 numpy==2.2.6
 scipy==1.15.3
-pandas==2.2.3
+pandas==3.0.6
 pyarrow==20.0.0
 duckdb==1.3.0
 scikit-learn==1.6.1
