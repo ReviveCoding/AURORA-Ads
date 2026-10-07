@@ -6,4 +6,4 @@ trl==0.19.1
 peft==0.15.2
 accelerate==1.7.0
 bitsandbytes==0.46.0
-xgboost==3.0.2
+xgboost==3.2.0
