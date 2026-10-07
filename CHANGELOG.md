@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+### Repository polish
+- added README status badges, quick links, and a clearer public documentation path
+- added citation, contribution, security, and conduct guidance
+- added structured bug/research issue forms, pull-request template, and CODEOWNERS
+- enabled Dependabot configuration and private vulnerability reporting
+- added package metadata plus CI dependency/import integrity checks
+
 ## v1.0.0 - 2026-10-07
 
 First public research release.

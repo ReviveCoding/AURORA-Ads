@@ -1,0 +1,43 @@
+name: Research or design question
+description: Discuss methodology, protocol, evaluation, or reproducibility
+title: "[Research]: "
+labels: ["research"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question or proposal
+      description: State the research/design issue precisely.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence or context
+      description: Link to code/docs and distinguish observation from interpretation.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Potential impact
+      description: Could this affect an estimand, data boundary, model selection, calibration, threshold, or published claim?
+  - type: dropdown
+    id: class
+    attributes:
+      label: Change class
+      options:
+        - Code/design clarification
+        - New prospective experiment
+        - Reproducibility investigation
+        - Possible documentation erratum
+        - Other
+    validations:
+      required: true
+  - type: checkboxes
+    id: integrity
+    attributes:
+      label: Integrity
+      options:
+        - label: I am not proposing to tune on a closed held-out/final result and call it independent evidence.
+          required: true

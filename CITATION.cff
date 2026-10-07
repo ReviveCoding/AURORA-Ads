@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use AURORA-Ads in research, please cite this software release."
+title: "AURORA-Ads: Evidence-Controlled Research for Reliable Agentic Advertising Systems"
+type: software
+authors:
+  - family-names: "Bae"
+    given-names: "Jinwoo"
+version: "1.0.0"
+date-released: "2026-10-07"
+repository-code: "https://github.com/ReviveCoding/AURORA-Ads"
+url: "https://github.com/ReviveCoding/AURORA-Ads/releases/tag/v1.0.0"
+abstract: >-
+  A research codebase for delayed-conversion modeling, causal and off-policy
+  evaluation, advertising simulation, executable agent workflows, calibration,
+  reproducibility, and model-risk diagnostics under explicit evidence controls.
