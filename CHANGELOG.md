@@ -6,7 +6,7 @@
 - added README status badges, quick links, and a clearer public documentation path
 - added citation, contribution, security, and conduct guidance
 - added structured bug/research issue forms, pull-request template, and CODEOWNERS
-- enabled Dependabot configuration and private vulnerability reporting
+- enabled private vulnerability reporting and a low-noise monthly grouped Dependabot policy
 - added package metadata plus CI dependency/import integrity checks
 - modernized GitHub Actions to Node 24-compatible v7 actions and pinned Ubuntu 24.04 for runner stability
 
