@@ -86,9 +86,9 @@
       "sha256": "d7ff2dc4b8b13bae45533d95bf04a13d2349f07e949d1b4619bfa0f2936e5a3b"
     },
     {
-      "path": "DESIGN_KO.md",
-      "bytes": 12936,
-      "sha256": "a381faebbe4b29cd3dcad990753571d2ac356eaeb502eaac27e0b6e9b95879f8"
+      "path": "DESIGN.md",
+      "bytes": 12175,
+      "sha256": "52960acba27c06d2ef4818c496d49495eb4da845cfeaf50ae95e1544e4b031d6"
     },
     {
       "path": "IMPLEMENTATION_LOG.md",
@@ -221,9 +221,9 @@
       "sha256": "e2d41a8dc117da748f8ed4d111c8a0bb48dc36cc31cf5fb32f6c51fa52746bbb"
     },
     {
-      "path": "docs/DESIGN_AUDIT_KO.md",
-      "bytes": 6404,
-      "sha256": "6211620214cd7dca4e0b1e568c519a6ea657ae2c3339e13c47d15cac74abcac9"
+      "path": "docs/DESIGN_REVIEW.md",
+      "bytes": 5702,
+      "sha256": "32c2a6caebf615a23eeca0fea9aa98511ff9e1c6af27cd36253ecb3a4396d522"
     },
     {
       "path": "docs/FINAL_SPEC.md",
@@ -1352,8 +1352,8 @@
     },
     {
       "path": "tools/research_run.py",
-      "bytes": 6139,
-      "sha256": "93f0c3a4da6f273005ce6b6af60ff47daa55938b3ebb15ae15f4e5e7e9287cac"
+      "bytes": 6134,
+      "sha256": "d273103f914fa9086cceb4fa8ba7d560c012069a610bc5112683d2c73407d4ca"
     },
     {
       "path": "tools/run_node.py",
@@ -1425,5 +1425,7 @@
       "bytes": 4612,
       "sha256": "6c32db91d004916a50198ec99c989dc695cde2eabb69ac7161dbd9277341317d"
     }
-  ]
+  ],
+  "publication_revision": "english-documentation-20261013",
+  "publication_revision_note": "English design replacements and a research snapshot path migration only. Historical release provenance remains available in previous Git commits."
 }
