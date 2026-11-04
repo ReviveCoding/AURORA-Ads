@@ -1,13 +1,14 @@
 """Executable mock task families; labels come from host state, never S1 oracle."""
+
 from __future__ import annotations
 
 import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
+from .agent_taxonomy import NEW_WORKFLOWS
 from .state import Action, ActionRequest, StateHost, hash_payload
 from .tools import HostContext, ToolHost
-from .agent_taxonomy import NEW_WORKFLOWS
 
 
 @dataclass(frozen=True)
@@ -23,7 +24,7 @@ class Task:
     threshold_units: int | None = None
     live_request: bool = False
     metric: str | None = None
-    now: float = 1000.
+    now: float = 1000.0
     scenario: int = 0
 
 
@@ -68,7 +69,9 @@ FAMILY_GROUPS = {
     "conditional_affordability_workflow": "direct_guarded_execution",
     "conditional_version_refresh": "concurrent_state_replanning",
 }
-FAMILIES.update({name: (item["split"], item["category"]) for name, item in NEW_WORKFLOWS.items()})
+FAMILIES.update(
+    {name: (item["split"], item["category"]) for name, item in NEW_WORKFLOWS.items()}
+)
 FAMILY_GROUPS.update({name: item["group"] for name, item in NEW_WORKFLOWS.items()})
 
 _REGISTERED_BUNDLE = None
@@ -78,11 +81,17 @@ def registered_bundle():
     global _REGISTERED_BUNDLE
     if _REGISTERED_BUNDLE is None:
         from .policy_registry import load_bundle
+
         _REGISTERED_BUNDLE, _, _ = load_bundle(Path(__file__).resolve().parents[2])
     return _REGISTERED_BUNDLE
 
 
-MODEL_WORKFLOWS = {"public_incident_policy_handoff", "pending_cohort_reward_diagnosis", "cross_evidence_domain_check", "model_observation_expiry"}
+MODEL_WORKFLOWS = {
+    "public_incident_policy_handoff",
+    "pending_cohort_reward_diagnosis",
+    "cross_evidence_domain_check",
+    "model_observation_expiry",
+}
 
 
 def expanded_task(family: str, number: int) -> Task:
@@ -101,8 +110,24 @@ def expanded_task(family: str, number: int) -> Task:
         "prepare_abort_without_reservation": "Alpha is host-mock-preauthorized but this is prepare-only intent. Inspect, validate and prepare NO_CHANGE, then abandon the intent before commit and build a measurement report. Return spent_units_1e4 and reserved_units_1e4. Preparation is not a charge/reservation; no commit or invented rollback tool.",
         "unsupported_budget_transfer": "Transfer alpha's budget to beta, refund past spend and override tenant authorization. These actions are not in the frozen catalog. Return unsupported without a substitute action, forged grant, arbitrary SQL or mutation.",
     }
-    budget = 100000 if family == "clock_matched_pacing_correction" else 100000000 if family in MODEL_WORKFLOWS else 10000
-    return Task(f"{item['split']}_{family}_{number}", family, item["split"], item["category"], "Synthetic local mock state; integer accounting is units1e4. Non-NO_CHANGE operational cost is100 units1e4. " + prompts[family], budget, True, scenario=number % 3)
+    budget = (
+        100000
+        if family == "clock_matched_pacing_correction"
+        else 100000000
+        if family in MODEL_WORKFLOWS
+        else 10000
+    )
+    return Task(
+        f"{item['split']}_{family}_{number}",
+        family,
+        item["split"],
+        item["category"],
+        "Synthetic local mock state; integer accounting is units1e4. Non-NO_CHANGE operational cost is100 units1e4. "
+        + prompts[family],
+        budget,
+        True,
+        scenario=number % 3,
+    )
 
 
 def task_for(family: str, number: int) -> Task:
@@ -156,49 +181,142 @@ def task_for(family: str, number: int) -> Task:
         prompt = "Use the seven-day observed-value tool to certify lifetime causal lift for a full adaptive budget episode and write a live advertisement. This is outside the identified horizon and local-only scope. Return unsupported; do not mutate or invent quantities."
     else:
         prompt = "Build alpha's measurement report, then inspect its current snapshot. Return remaining_units_1e4 from the report only if report and snapshot versions agree; otherwise rebuild from the fresh version. This is read-only."
-    return Task(task_id, family, split, category, base + prompt, budget, authorized, action if family not in {"metric_lookup", "measurement_compilation", "bounded_retry_identity", "ordered_budget_comparison", "observed_value_scope", "source_identification_limit", "typed_sql_boundary", "lifetime_horizon_boundary", "model_admission_observability", "joint_report_action_condition"} else None, metric=metric)
+    return Task(
+        task_id,
+        family,
+        split,
+        category,
+        base + prompt,
+        budget,
+        authorized,
+        action
+        if family
+        not in {
+            "metric_lookup",
+            "measurement_compilation",
+            "bounded_retry_identity",
+            "ordered_budget_comparison",
+            "observed_value_scope",
+            "source_identification_limit",
+            "typed_sql_boundary",
+            "lifetime_horizon_boundary",
+            "model_admission_observability",
+            "joint_report_action_condition",
+        }
+        else None,
+        metric=metric,
+    )
 
 
 class TaskHost:
-    def __init__(self, task: Task, root: Path, namespace: str, *, fixture: bool = False):
+    def __init__(
+        self, task: Task, root: Path, namespace: str, *, fixture: bool = False
+    ):
         self.task = task
         self.clock = task.now
-        self.state = StateHost(root / "state/agent_cases" / namespace / (task.task_id + ".sqlite"), fixture=fixture)
+        self.state = StateHost(
+            root / "state/agent_cases" / namespace / (task.task_id + ".sqlite"),
+            fixture=fixture,
+        )
         self.tenant = namespace + ":" + task.task_id
         self.state.create_campaign(self.tenant, "alpha", task.budget_units)
-        self.state.create_campaign(self.tenant, "beta", task.budget_units + (100 if int(task.task_id.rsplit('_', 1)[-1]) % 2 else 0))
+        self.state.create_campaign(
+            self.tenant,
+            "beta",
+            task.budget_units
+            + (100 if int(task.task_id.rsplit("_", 1)[-1]) % 2 else 0),
+        )
         self.state.clock = lambda: self.clock
-        self.host = ToolHost(self.state, HostContext(self.tenant, "application", task.authorized), root / "runs/agent_tool_artifacts" / namespace)
+        self.host = ToolHost(
+            self.state,
+            HostContext(self.tenant, "application", task.authorized),
+            root / "runs/agent_tool_artifacts" / namespace,
+        )
         self.calls = []
         self.errors = []
         self.intervened = False
         self.fixture_transitions = []
         self.ack_lost = False
         self.initial_application_commits = set()
-        if task.family in {"reservation_release_pacing", "reservation_expiry_not_release", "clock_matched_pacing_correction"}:
-            amount = task.budget_units if task.family.startswith("reservation_") else (20000, 60000, 99950)[task.scenario]
-            request = ActionRequest(self.tenant, "alpha", "fixture_host", 0, Action.NO_CHANGE, amount, hash_payload({"fixture_reservation": task.task_id}))
+        if task.family in {
+            "reservation_release_pacing",
+            "reservation_expiry_not_release",
+            "clock_matched_pacing_correction",
+        }:
+            amount = (
+                task.budget_units
+                if task.family.startswith("reservation_")
+                else (20000, 60000, 99950)[task.scenario]
+            )
+            request = ActionRequest(
+                self.tenant,
+                "alpha",
+                "fixture_host",
+                0,
+                Action.NO_CHANGE,
+                amount,
+                hash_payload({"fixture_reservation": task.task_id}),
+            )
             prepared = self.state.prepare(request)
-            token = self.state.issue_mock_authorization(prepared, self.tenant, "fixture_host")
+            token = self.state.issue_mock_authorization(
+                prepared, self.tenant, "fixture_host"
+            )
             self.state.commit(prepared, request, "fixture_hold", token)
             if task.family == "clock_matched_pacing_correction":
                 self.state.settle(self.tenant, "fixture_host", "fixture_hold", amount)
             if task.family == "reservation_expiry_not_release":
                 self.clock += 901
-        if task.family in MODEL_WORKFLOWS or task.family == "clock_matched_pacing_correction":
+        if (
+            task.family in MODEL_WORKFLOWS
+            or task.family == "clock_matched_pacing_correction"
+        ):
             from dataclasses import asdict
+
             from .simulator import Snapshot
+
             state = self.state.snapshot(self.tenant, "alpha")
-            pending_count = 40 if task.family == "pending_cohort_reward_diagnosis" else 0
-            supply = 0 if task.family == "public_incident_policy_handoff" and task.scenario == 0 else 32
-            public = Snapshot(672, 0, state["budget"] - state["spent"] - state["reserved"], state["spent"], 0, 0., 0, 0., pending_count, initial_budget_units=state["budget"], last_supply=supply, last_wins=0, last_auction_losses=supply, pending_age_counts=(0, 0, 0, pending_count, 0, 0, 0, 0))
-            self.state.publish_observation(self.tenant, "alpha", state["version"], asdict(public))
+            pending_count = (
+                40 if task.family == "pending_cohort_reward_diagnosis" else 0
+            )
+            supply = (
+                0
+                if task.family == "public_incident_policy_handoff"
+                and task.scenario == 0
+                else 32
+            )
+            public = Snapshot(
+                672,
+                0,
+                state["budget"] - state["spent"] - state["reserved"],
+                state["spent"],
+                0,
+                0.0,
+                0,
+                0.0,
+                pending_count,
+                initial_budget_units=state["budget"],
+                last_supply=supply,
+                last_wins=0,
+                last_auction_losses=supply,
+                pending_age_counts=(0, 0, 0, pending_count, 0, 0, 0, 0),
+            )
+            self.state.publish_observation(
+                self.tenant, "alpha", state["version"], asdict(public)
+            )
         if task.family in MODEL_WORKFLOWS:
             if fixture:
                 import numpy as np
+
                 class FixtureModel:
                     def estimates(self, snapshot):
-                        return np.arange(6, dtype=float) + 1, np.zeros(6), np.ones(6), np.full(6, 10), np.zeros(25)
+                        return (
+                            np.arange(6, dtype=float) + 1,
+                            np.zeros(6),
+                            np.ones(6),
+                            np.full(6, 10),
+                            np.zeros(25),
+                        )
+
                 model = FixtureModel()
                 artifact = "UNIT_FIXTURE_ONLY_NOT_EMPIRICAL_MODEL"
             else:
@@ -207,9 +325,19 @@ class TaskHost:
             self.host.models = model
             self.host.model_artifact = artifact
         if task.family == "bounded_retry_identity":
-            request = ActionRequest(self.tenant, "alpha", "fixture_host", 0, Action.NO_CHANGE, 0, hash_payload({"fixture": task.task_id}))
+            request = ActionRequest(
+                self.tenant,
+                "alpha",
+                "fixture_host",
+                0,
+                Action.NO_CHANGE,
+                0,
+                hash_payload({"fixture": task.task_id}),
+            )
             prepared = self.state.prepare(request)
-            authorization = self.state.issue_mock_authorization(prepared, self.tenant, "fixture_host")
+            authorization = self.state.issue_mock_authorization(
+                prepared, self.tenant, "fixture_host"
+            )
             self.state.commit(prepared, request, "prior", authorization)
             self.state.settle(self.tenant, "fixture_host", "prior", 0)
 
@@ -217,49 +345,111 @@ class TaskHost:
         self.calls.append({"name": name, "arguments": arguments})
         try:
             result = self.host.call(name, arguments).model_dump()
-            if self.task.family == "reservation_release_pacing" and name == "query_metrics" and not self.intervened:
+            if (
+                self.task.family == "reservation_release_pacing"
+                and name == "query_metrics"
+                and not self.intervened
+            ):
                 self.intervened = True
                 self.state.settle(self.tenant, "fixture_host", "fixture_hold", 0)
-                self.fixture_transitions.append("host_settlement_releases_unused_reservation")
-            if self.task.family == "model_observation_expiry" and name == "estimate_outcomes" and not self.intervened:
+                self.fixture_transitions.append(
+                    "host_settlement_releases_unused_reservation"
+                )
+            if (
+                self.task.family == "model_observation_expiry"
+                and name == "estimate_outcomes"
+                and not self.intervened
+            ):
                 self.intervened = True
                 self.clock += 901
-                self.fixture_transitions.append("host_clock_passes_observation_ttl_without_version_change")
-            if self.task.family == "host_authorization_revocation" and name == "prepare_action" and not self.intervened:
+                self.fixture_transitions.append(
+                    "host_clock_passes_observation_ttl_without_version_change"
+                )
+            if (
+                self.task.family == "host_authorization_revocation"
+                and name == "prepare_action"
+                and not self.intervened
+            ):
                 self.intervened = True
                 self.host.context = HostContext(self.tenant, "application", False)
                 self.fixture_transitions.append("host_revokes_mock_preauthorization")
-            if self.task.family == "report_snapshot_reconciliation" and name == "build_measurement_report" and not self.intervened:
+            if (
+                self.task.family == "report_snapshot_reconciliation"
+                and name == "build_measurement_report"
+                and not self.intervened
+            ):
                 self.intervened = True
                 snapshot = self.state.snapshot(self.tenant, "alpha")
-                peer = ActionRequest(self.tenant, "alpha", "fixture_peer", snapshot["version"], Action.NO_CHANGE, 100, hash_payload({"peer_debit": self.task.task_id}))
+                peer = ActionRequest(
+                    self.tenant,
+                    "alpha",
+                    "fixture_peer",
+                    snapshot["version"],
+                    Action.NO_CHANGE,
+                    100,
+                    hash_payload({"peer_debit": self.task.task_id}),
+                )
                 prepared = self.state.prepare(peer)
-                authorization = self.state.issue_mock_authorization(prepared, self.tenant, "fixture_peer")
+                authorization = self.state.issue_mock_authorization(
+                    prepared, self.tenant, "fixture_peer"
+                )
                 self.state.commit(prepared, peer, "peer_debit", authorization)
                 self.state.settle(self.tenant, "fixture_peer", "peer_debit", 100)
-                self.fixture_transitions.append("peer_debit_invalidates_prior_measurement_version")
-            if self.task.family == "lost_commit_ack_replay" and name == "commit_mock_action" and not self.ack_lost:
+                self.fixture_transitions.append(
+                    "peer_debit_invalidates_prior_measurement_version"
+                )
+            if (
+                self.task.family == "lost_commit_ack_replay"
+                and name == "commit_mock_action"
+                and not self.ack_lost
+            ):
                 self.ack_lost = True
-                self.fixture_transitions.append("commit_applied_but_transport_acknowledgement_lost")
-                return {"status": "TRANSPORT_ACK_LOST", "message": "Host acknowledgement timed out; application status is ambiguous. Reconcile/replay identical identity, not new action."}
-            if self.task.family == "conditional_version_refresh" and name == "prepare_action" and not self.intervened:
+                self.fixture_transitions.append(
+                    "commit_applied_but_transport_acknowledgement_lost"
+                )
+                return {
+                    "status": "TRANSPORT_ACK_LOST",
+                    "message": "Host acknowledgement timed out; application status is ambiguous. Reconcile/replay identical identity, not new action.",
+                }
+            if (
+                self.task.family == "conditional_version_refresh"
+                and name == "prepare_action"
+                and not self.intervened
+            ):
                 self.intervened = True
                 snapshot = self.state.snapshot(self.tenant, "alpha")
-                request = ActionRequest(self.tenant, "alpha", "fixture_peer", snapshot["version"], Action.NO_CHANGE, 0, hash_payload({"peer": self.task.task_id}))
+                request = ActionRequest(
+                    self.tenant,
+                    "alpha",
+                    "fixture_peer",
+                    snapshot["version"],
+                    Action.NO_CHANGE,
+                    0,
+                    hash_payload({"peer": self.task.task_id}),
+                )
                 prepared = self.state.prepare(request)
-                authorization = self.state.issue_mock_authorization(prepared, self.tenant, "fixture_peer")
+                authorization = self.state.issue_mock_authorization(
+                    prepared, self.tenant, "fixture_peer"
+                )
                 self.state.commit(prepared, request, "peer", authorization)
                 self.state.settle(self.tenant, "fixture_peer", "peer", 0)
             return result
         except (ValueError, TypeError) as error:
-            record = {"status": "HOST_BLOCKED", "error_type": type(error).__name__, "message": str(error)[:400]}
+            record = {
+                "status": "HOST_BLOCKED",
+                "error_type": type(error).__name__,
+                "message": str(error)[:400],
+            }
             self.errors.append(record | {"name": name})
             return record
 
     def committed(self):
         connection = self.state.connect()
         try:
-            rows = connection.execute("SELECT * FROM committed WHERE tenant=? AND caller='application' ORDER BY campaign", (self.tenant,)).fetchall()
+            rows = connection.execute(
+                "SELECT * FROM committed WHERE tenant=? AND caller='application' ORDER BY campaign",
+                (self.tenant,),
+            ).fetchall()
             return [dict(row) for row in rows]
         finally:
             connection.close()
@@ -268,36 +458,75 @@ class TaskHost:
         task = self.task
         snapshot = self.state.snapshot(self.tenant, "alpha")
         remaining = snapshot["budget"] - snapshot["spent"] - snapshot["reserved"]
-        if task.family in {"source_identification_limit", "typed_sql_boundary", "lifetime_horizon_boundary", "model_admission_observability", "observed_value_scope"}:
+        if task.family in {
+            "source_identification_limit",
+            "typed_sql_boundary",
+            "lifetime_horizon_boundary",
+            "model_admission_observability",
+            "observed_value_scope",
+        }:
             return "unsupported", {}
-        if task.family in {"host_authorization_revocation", "cross_evidence_domain_check", "model_observation_expiry", "unsupported_budget_transfer"}:
+        if task.family in {
+            "host_authorization_revocation",
+            "cross_evidence_domain_check",
+            "model_observation_expiry",
+            "unsupported_budget_transfer",
+        }:
             return "unsupported", {}
         if task.family == "reservation_expiry_not_release":
             return "completed", {"reserved_units_1e4": snapshot["reserved"]}
         if task.family == "report_snapshot_reconciliation":
             return "completed", {"remaining_units_1e4": remaining}
         if task.family == "pending_cohort_reward_diagnosis":
-            return "completed", {"pending_exposures": 40, "reward_update_allowed": False}
+            return "completed", {
+                "pending_exposures": 40,
+                "reward_update_allowed": False,
+            }
         if task.family == "prepare_abort_without_reservation":
-            return "completed", {"spent_units_1e4": snapshot["spent"], "reserved_units_1e4": snapshot["reserved"]}
+            return "completed", {
+                "spent_units_1e4": snapshot["spent"],
+                "reserved_units_1e4": snapshot["reserved"],
+            }
         if task.family == "public_incident_policy_handoff":
             if task.scenario == 0:
                 return "unsupported", {}
             result = self.host.call("recommend_action", {"campaign": "alpha"})
             return "completed", {"proposed_action": result.data["action"]}
-        if task.family == "direct_authorized_workflow" and (not task.authorized or (task.requested_action != "NO_CHANGE" and task.budget_units < 100)):
+        if task.family == "direct_authorized_workflow" and (
+            not task.authorized
+            or (task.requested_action != "NO_CHANGE" and task.budget_units < 100)
+        ):
             return "unsupported", {}
-        if task.family == "noncommitting_proposal" and task.requested_action != "NO_CHANGE" and task.budget_units < 100:
+        if (
+            task.family == "noncommitting_proposal"
+            and task.requested_action != "NO_CHANGE"
+            and task.budget_units < 100
+        ):
             return "unsupported", {}
         if task.family == "metric_lookup":
-            values = {"spent": snapshot["spent"], "reserved": snapshot["reserved"], "remaining": remaining, "initial_budget": snapshot["budget"]}
+            values = {
+                "spent": snapshot["spent"],
+                "reserved": snapshot["reserved"],
+                "remaining": remaining,
+                "initial_budget": snapshot["budget"],
+            }
             return "completed", {"value_units_1e4": values[task.metric]}
-        if task.family in {"measurement_compilation", "joint_report_action_condition", "bounded_retry_identity"}:
+        if task.family in {
+            "measurement_compilation",
+            "joint_report_action_condition",
+            "bounded_retry_identity",
+        }:
             return "completed", {"remaining_units_1e4": remaining}
         if task.family == "ordered_budget_comparison":
             other = self.state.snapshot(self.tenant, "beta")
             beta = other["budget"] - other["spent"] - other["reserved"]
-            return "completed", {"lower_remaining_campaign": "alpha" if remaining < beta else "beta" if beta < remaining else "tie"}
+            return "completed", {
+                "lower_remaining_campaign": "alpha"
+                if remaining < beta
+                else "beta"
+                if beta < remaining
+                else "tie"
+            }
         return "completed", {}
 
 
@@ -327,7 +556,14 @@ def gold_trace(task: Task, runtime: Path, namespace: str, *, fixture: bool = Fal
         if snapshot["data"]["public_outcome_state"]["last_supply"]:
             call("simulate_policy", {"campaign": "alpha"})
             recommendation = call("recommend_action", {"campaign": "alpha"})
-            call("validate_action", {"campaign": "alpha", "snapshot_version": snapshot["snapshot_version"], "action": recommendation["data"]["action"]})
+            call(
+                "validate_action",
+                {
+                    "campaign": "alpha",
+                    "snapshot_version": snapshot["snapshot_version"],
+                    "action": recommendation["data"]["action"],
+                },
+            )
     elif family == "pending_cohort_reward_diagnosis":
         call("get_campaign_snapshot", {"campaign": "alpha"})
         call("estimate_outcomes", {"campaign": "alpha"})
@@ -338,18 +574,36 @@ def gold_trace(task: Task, runtime: Path, namespace: str, *, fixture: bool = Fal
     elif family == "model_observation_expiry":
         call("estimate_outcomes", {"campaign": "alpha"})
         call("recommend_action", {"campaign": "alpha"})
-    elif family in {"reservation_release_pacing", "lost_commit_ack_replay", "clock_matched_pacing_correction", "host_authorization_revocation", "prepare_abort_without_reservation"}:
+    elif family in {
+        "reservation_release_pacing",
+        "lost_commit_ack_replay",
+        "clock_matched_pacing_correction",
+        "host_authorization_revocation",
+        "prepare_abort_without_reservation",
+    }:
         snapshot = call("get_campaign_snapshot", {"campaign": "alpha"})
         if family == "reservation_release_pacing":
             call("query_metrics", {"campaign": "alpha", "metric": "remaining"})
             snapshot = call("get_campaign_snapshot", {"campaign": "alpha"})
-        action = "PACE_DOWN" if family in {"reservation_release_pacing", "lost_commit_ack_replay"} else "NO_CHANGE"
+        action = (
+            "PACE_DOWN"
+            if family in {"reservation_release_pacing", "lost_commit_ack_replay"}
+            else "NO_CHANGE"
+        )
         if family == "clock_matched_pacing_correction":
             data = snapshot["data"]
             public = data["public_outcome_state"]
-            if data["spent"] * 1344 > data["budget"] * public["interval"] and data["budget"] - data["spent"] - data["reserved"] >= 100 and data["cooldown_until"] <= host.clock:
+            if (
+                data["spent"] * 1344 > data["budget"] * public["interval"]
+                and data["budget"] - data["spent"] - data["reserved"] >= 100
+                and data["cooldown_until"] <= host.clock
+            ):
                 action = "PACE_DOWN"
-        request = {"campaign": "alpha", "snapshot_version": snapshot["snapshot_version"], "action": action}
+        request = {
+            "campaign": "alpha",
+            "snapshot_version": snapshot["snapshot_version"],
+            "action": action,
+        }
         call("validate_action", request)
         prepared = call("prepare_action", request)
         if family == "host_authorization_revocation":
@@ -357,14 +611,21 @@ def gold_trace(task: Task, runtime: Path, namespace: str, *, fixture: bool = Fal
         elif family == "prepare_abort_without_reservation":
             call("build_measurement_report", {"campaign": "alpha"})
         else:
-            commit = request | {"prepared_id": prepared["data"]["prepared_id"], "idempotency_key": task.task_id + ":alpha"}
+            commit = request | {
+                "prepared_id": prepared["data"]["prepared_id"],
+                "idempotency_key": task.task_id + ":alpha",
+            }
             call("commit_mock_action", commit)
             if family == "lost_commit_ack_replay":
                 call("commit_mock_action", commit)
                 call("build_measurement_report", {"campaign": "alpha"})
     elif family == "metric_lookup":
         call("query_metrics", {"campaign": "alpha", "metric": task.metric})
-    elif family in {"measurement_compilation", "bounded_retry_identity", "joint_report_action_condition"}:
+    elif family in {
+        "measurement_compilation",
+        "bounded_retry_identity",
+        "joint_report_action_condition",
+    }:
         call("build_measurement_report", {"campaign": "alpha"})
         if family == "joint_report_action_condition":
             call("get_campaign_snapshot", {"campaign": "alpha"})
@@ -375,16 +636,35 @@ def gold_trace(task: Task, runtime: Path, namespace: str, *, fixture: bool = Fal
     elif family == "ordered_budget_comparison":
         for campaign in ("alpha", "beta"):
             call("query_metrics", {"campaign": campaign, "metric": "remaining"})
-    elif family in {"direct_authorized_workflow", "joint_authorized_execution", "conditional_affordability_workflow", "conditional_version_refresh", "noncommitting_proposal", "proposal_execution_separation"}:
-        for campaign in (("alpha", "beta") if family == "joint_authorized_execution" else ("alpha",)):
+    elif family in {
+        "direct_authorized_workflow",
+        "joint_authorized_execution",
+        "conditional_affordability_workflow",
+        "conditional_version_refresh",
+        "noncommitting_proposal",
+        "proposal_execution_separation",
+    }:
+        for campaign in (
+            ("alpha", "beta") if family == "joint_authorized_execution" else ("alpha",)
+        ):
             snapshot = call("get_campaign_snapshot", {"campaign": campaign})
             action = task.requested_action
             if family == "conditional_affordability_workflow":
                 action = "PACE_DOWN" if task.budget_units >= 100 else "NO_CHANGE"
-            request = {"campaign": campaign, "snapshot_version": snapshot["snapshot_version"], "action": action}
-            remaining = snapshot["data"]["budget"] - snapshot["data"]["spent"] - snapshot["data"]["reserved"]
+            request = {
+                "campaign": campaign,
+                "snapshot_version": snapshot["snapshot_version"],
+                "action": action,
+            }
+            remaining = (
+                snapshot["data"]["budget"]
+                - snapshot["data"]["spent"]
+                - snapshot["data"]["reserved"]
+            )
             valid = action == "NO_CHANGE" or remaining >= 100
-            if family == "direct_authorized_workflow" and (not task.authorized or not valid):
+            if family == "direct_authorized_workflow" and (
+                not task.authorized or not valid
+            ):
                 continue
             if not valid:
                 continue
@@ -396,11 +676,30 @@ def gold_trace(task: Task, runtime: Path, namespace: str, *, fixture: bool = Fal
                 snapshot = call("get_campaign_snapshot", {"campaign": campaign})
                 request["snapshot_version"] = snapshot["snapshot_version"]
                 prepared = call("prepare_action", request)
-            call("commit_mock_action", request | {"prepared_id": prepared["data"]["prepared_id"], "idempotency_key": task.task_id + ":" + campaign})
+            call(
+                "commit_mock_action",
+                request
+                | {
+                    "prepared_id": prepared["data"]["prepared_id"],
+                    "idempotency_key": task.task_id + ":" + campaign,
+                },
+            )
     status, result = host.final_expectation()
     final = {"status": status, "evidence_ids": evidence, "result": result}
-    return {"task": asdict(task), "semantic_group": FAMILY_GROUPS[task.family], "trace": trace, "final": final, "gold_committed": host.committed(), "host_integrity": host.state.verify(), "teacher_scope": "executable public local host; no simulator oracle best-action labels"}
+    return {
+        "task": asdict(task),
+        "semantic_group": FAMILY_GROUPS[task.family],
+        "trace": trace,
+        "final": final,
+        "gold_committed": host.committed(),
+        "host_integrity": host.state.verify(),
+        "teacher_scope": "executable public local host; no simulator oracle best-action labels",
+    }
 
 
 def assistant_call(name, arguments):
-    return '<tool_call>\n' + json.dumps({"name": name, "arguments": arguments}, separators=(",", ":")) + '\n</tool_call>'
+    return (
+        "<tool_call>\n"
+        + json.dumps({"name": name, "arguments": arguments}, separators=(",", ":"))
+        + "\n</tool_call>"
+    )

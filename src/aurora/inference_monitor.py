@@ -1,14 +1,21 @@
 """Sampled resource stop during token generation; never a continuous peak claim."""
+
 from __future__ import annotations
 
-import time
 import math
 import subprocess
+import time
 from collections.abc import Callable
 
 
 class DecodeResourceMonitor:
-    def __init__(self, health: Callable[[], None], *, cadence_seconds: float = 2., clock=time.perf_counter):
+    def __init__(
+        self,
+        health: Callable[[], None],
+        *,
+        cadence_seconds: float = 2.0,
+        clock=time.perf_counter,
+    ):
         if not math.isfinite(cadence_seconds) or cadence_seconds <= 0:
             raise ValueError("Positive monitoring cadence required")
         self.health = health

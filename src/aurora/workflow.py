@@ -1,16 +1,36 @@
 """Resumable capability DAG with distinct execution and scientific dispositions."""
+
 from __future__ import annotations
 
-import json
 import hashlib
+import json
 import time
 from pathlib import Path
 from typing import Any
 
 from .artifacts import atomic_json, digest, immutable_json
 
-EXECUTION = {"PENDING", "RUNNING", "CHECKPOINTED", "EXECUTED", "FAILED", "BLOCKED_SOURCE", "BLOCKED_HARDWARE", "BLOCKED_ENVIRONMENT", "INVALID", "NOT_APPLICABLE"}
-SCIENCE = {"NOT_RUN", "SUPPORTED", "NOT_ESTABLISHED", "UNDERPOWERED", "INVALID", "BLOCKED_SOURCE", "BLOCKED_HARDWARE"}
+EXECUTION = {
+    "PENDING",
+    "RUNNING",
+    "CHECKPOINTED",
+    "EXECUTED",
+    "FAILED",
+    "BLOCKED_SOURCE",
+    "BLOCKED_HARDWARE",
+    "BLOCKED_ENVIRONMENT",
+    "INVALID",
+    "NOT_APPLICABLE",
+}
+SCIENCE = {
+    "NOT_RUN",
+    "SUPPORTED",
+    "NOT_ESTABLISHED",
+    "UNDERPOWERED",
+    "INVALID",
+    "BLOCKED_SOURCE",
+    "BLOCKED_HARDWARE",
+}
 
 
 class Ledger:
@@ -28,8 +48,19 @@ class Ledger:
             if value["registry_sha256"] != digest(self.registry):
                 raise ValueError("Registry changed; migration required")
         else:
-            value = {"registry_sha256": digest(self.registry), "generation": 0, "capabilities": {}, "nodes": {
-                node["id"]: {"execution_status": "PENDING", "scientific_outcome": "NOT_RUN", "artifacts": []} for node in self.nodes}}
+            value = {
+                "registry_sha256": digest(self.registry),
+                "generation": 0,
+                "capabilities": {},
+                "nodes": {
+                    node["id"]: {
+                        "execution_status": "PENDING",
+                        "scientific_outcome": "NOT_RUN",
+                        "artifacts": [],
+                    }
+                    for node in self.nodes
+                },
+            }
         # The immutable intent is the commit point; an interrupted export/cache
         # replacement can be reconstructed without inventing a successful run.
         events = []
@@ -37,16 +68,24 @@ class Ledger:
             if path.is_symlink():
                 raise ValueError("Event symlink rejected")
             event = json.loads(path.read_text())
-            expected = hashlib.sha256(json.dumps(event, sort_keys=True, allow_nan=False).encode()).hexdigest()
+            expected = hashlib.sha256(
+                json.dumps(event, sort_keys=True, allow_nan=False).encode()
+            ).hexdigest()
             if path.stem != expected:
                 raise ValueError("Immutable event hash mismatch")
             events.append((path, event))
         while True:
-            candidates = [(path, event) for path, event in events if event["generation"] == value["generation"] + 1]
+            candidates = [
+                (path, event)
+                for path, event in events
+                if event["generation"] == value["generation"] + 1
+            ]
             if not candidates:
                 break
             if len(candidates) != 1:
-                raise ValueError("Ambiguous interrupted state; manual reconciliation required")
+                raise ValueError(
+                    "Ambiguous interrupted state; manual reconciliation required"
+                )
             path, event = candidates[0]
             if event.get("registry_sha256") != value["registry_sha256"]:
                 raise ValueError("Interrupted event lacks matching registry identity")
@@ -62,18 +101,41 @@ class Ledger:
         value = self.read()
         result = []
         for node in self.nodes:
-            if value["nodes"][node["id"]]["execution_status"] not in {"PENDING", "CHECKPOINTED"}:
+            if value["nodes"][node["id"]]["execution_status"] not in {
+                "PENDING",
+                "CHECKPOINTED",
+            }:
                 continue
             if node["trigger"] == "all_declared_tracks_terminal":
-                if all(v["execution_status"] not in {"PENDING", "RUNNING", "CHECKPOINTED"} for key, v in value["nodes"].items() if key != node["id"]):
+                if all(
+                    v["execution_status"] not in {"PENDING", "RUNNING", "CHECKPOINTED"}
+                    for key, v in value["nodes"].items()
+                    if key != node["id"]
+                ):
                     result.append(node["id"])
                 continue
-            if all(value["nodes"][dependency]["execution_status"] == "EXECUTED" for dependency in node["requires"]):
+            if all(
+                value["nodes"][dependency]["execution_status"] == "EXECUTED"
+                for dependency in node["requires"]
+            ):
                 result.append(node["id"])
         return result
 
-    def update(self, node_id: str, status: str, *, science: str = "NOT_RUN", artifacts: tuple[Path, ...] = (), reason: str = "", capabilities: dict[str, bool] | None = None) -> dict[str, Any]:
-        if node_id not in self.by_id or status not in EXECUTION or science not in SCIENCE:
+    def update(
+        self,
+        node_id: str,
+        status: str,
+        *,
+        science: str = "NOT_RUN",
+        artifacts: tuple[Path, ...] = (),
+        reason: str = "",
+        capabilities: dict[str, bool] | None = None,
+    ) -> dict[str, Any]:
+        if (
+            node_id not in self.by_id
+            or status not in EXECUTION
+            or science not in SCIENCE
+        ):
             raise ValueError("Unknown node/status")
         if science == "SUPPORTED" and status != "EXECUTED":
             raise ValueError("Unexecuted hypothesis cannot be supported")
@@ -82,16 +144,35 @@ class Ledger:
         with lock.open("x"):
             try:
                 value = self.read()
-                if status in {"RUNNING", "EXECUTED"} and not all(value["nodes"][dep]["execution_status"] == "EXECUTED" for dep in self.by_id[node_id]["requires"]):
+                if status in {"RUNNING", "EXECUTED"} and not all(
+                    value["nodes"][dep]["execution_status"] == "EXECUTED"
+                    for dep in self.by_id[node_id]["requires"]
+                ):
                     raise ValueError("Dependencies not executed")
-                refs = [{"path": str(path.resolve()), "sha256": digest(path)} for path in artifacts]
+                refs = [
+                    {"path": str(path.resolve()), "sha256": digest(path)}
+                    for path in artifacts
+                ]
                 if status == "EXECUTED" and not refs:
                     raise ValueError("Execution requires artifact evidence")
                 if status.startswith("BLOCKED") and not reason:
                     raise ValueError("Blocker requires actionable reason")
                 previous = value["nodes"][node_id]
-                record = {"execution_status": status, "scientific_outcome": science, "artifacts": refs, "reason": reason}
-                event = {"registry_sha256": value["registry_sha256"], "generation": value["generation"] + 1, "node_id": node_id, "previous": previous, "next": record, "capabilities": capabilities or {}, "at_unix": time.time()}
+                record = {
+                    "execution_status": status,
+                    "scientific_outcome": science,
+                    "artifacts": refs,
+                    "reason": reason,
+                }
+                event = {
+                    "registry_sha256": value["registry_sha256"],
+                    "generation": value["generation"] + 1,
+                    "node_id": node_id,
+                    "previous": previous,
+                    "next": record,
+                    "capabilities": capabilities or {},
+                    "at_unix": time.time(),
+                }
                 event_path = immutable_json(self.state.parent / "events", event)
                 value["generation"] += 1
                 value["nodes"][node_id] = record
