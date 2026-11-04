@@ -1,9 +1,10 @@
 """Preserve actually executed traces when a resource interruption escapes agent."""
+
 from __future__ import annotations
 
 from copy import deepcopy
 
-from aurora.agent import run_agent, evaluate_task
+from aurora.agent import evaluate_task, run_agent
 
 
 class RecordingHost:
@@ -16,7 +17,9 @@ class RecordingHost:
 
     def call(self, name, arguments):
         response = self.original.call(name, arguments)
-        self.executed_trace.append(deepcopy({"name": name, "arguments": arguments, "response": response}))
+        self.executed_trace.append(
+            deepcopy({"name": name, "arguments": arguments, "response": response})
+        )
         return response
 
 
@@ -33,7 +36,15 @@ def recorded_attempt(task, host, generator) -> tuple[dict, dict | None]:
         return run_agent(task, recording, generator), None
     except Exception as error:
         diagnostic = {"type": type(error).__name__, "message": str(error)[:1000]}
-        result = evaluate_task(task, host, recording.executed_trace, None, diagnostic["type"] + ":" + diagnostic["message"])
-        result["generated_tokens"] = sum(item["completion_tokens"] for item in generator.measurements[start_record:])
+        result = evaluate_task(
+            task,
+            host,
+            recording.executed_trace,
+            None,
+            diagnostic["type"] + ":" + diagnostic["message"],
+        )
+        result["generated_tokens"] = sum(
+            item["completion_tokens"] for item in generator.measurements[start_record:]
+        )
         result["interrupted_after_actual_attempt"] = True
         return result, diagnostic

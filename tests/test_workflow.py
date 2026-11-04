@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from aurora.artifacts import atomic_json, digest
 from aurora.workflow import Ledger
+
 sys.path.insert(0, str(ROOT / "tools"))
 from acquire_data import resolve_landing_html
 
@@ -31,7 +32,9 @@ class WorkflowTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.ledger.update("E10", "RUNNING")
         self.ledger.update("E00", "EXECUTED", artifacts=(self.evidence,))
-        self.ledger.update("E01", "BLOCKED_SOURCE", reason="Fixture: metadata unavailable")
+        self.ledger.update(
+            "E01", "BLOCKED_SOURCE", reason="Fixture: metadata unavailable"
+        )
         self.assertIn("E07", self.ledger.ready())
         self.assertNotIn("E16", self.ledger.ready())
 
@@ -41,7 +44,9 @@ class WorkflowTests(unittest.TestCase):
         original = digest(event)
         self.ledger.update("E00", "FAILED", reason="qualification invalidation fixture")
         self.assertEqual(digest(event), original)
-        self.assertEqual(first["nodes"]["E00"]["artifacts"][0]["sha256"], digest(self.evidence))
+        self.assertEqual(
+            first["nodes"]["E00"]["artifacts"][0]["sha256"], digest(self.evidence)
+        )
 
     def test_interrupted_state_export_replays_immutable_intent(self):
         first = self.ledger.update("E00", "EXECUTED", artifacts=(self.evidence,))
@@ -72,10 +77,21 @@ class WorkflowTests(unittest.TestCase):
         self.assertFalse(self.ledger.state.exists())
 
     def test_publisher_legacy_http_is_upgraded_only_to_same_host(self):
-        spec = {"source_page": "https://ailab.criteo.com/", "landing_link_host": "go.criteo.net", "landing_link_text": "click here"}
-        self.assertEqual(resolve_landing_html('<a href="http://go.criteo.net/data.tar.gz">click here</a>', spec), "https://go.criteo.net/data.tar.gz")
+        spec = {
+            "source_page": "https://ailab.criteo.com/",
+            "landing_link_host": "go.criteo.net",
+            "landing_link_text": "click here",
+        }
+        self.assertEqual(
+            resolve_landing_html(
+                '<a href="http://go.criteo.net/data.tar.gz">click here</a>', spec
+            ),
+            "https://go.criteo.net/data.tar.gz",
+        )
         with self.assertRaises(ValueError):
-            resolve_landing_html('<a href="http://evil.example/data.tar.gz">click here</a>', spec)
+            resolve_landing_html(
+                '<a href="http://evil.example/data.tar.gz">click here</a>', spec
+            )
 
 
 if __name__ == "__main__":

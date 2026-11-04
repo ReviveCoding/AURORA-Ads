@@ -1,11 +1,12 @@
 """Bounded, read-only prediction service; economic mutation stays in the host."""
+
 from __future__ import annotations
 
 import asyncio
 import math
 import time
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
-from typing import Awaitable, Callable
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -55,8 +56,19 @@ class BoundedPredictor:
     call really finishes. Inference is read-only: cancellation/retry cannot
     create or settle a budget reservation. Shutdown drains accepted requests.
     """
-    def __init__(self, model_sha256: str, backend: Callable[[list[float]], Awaitable[list[float]]], *, capacity: int = 16):
-        if capacity <= 0 or len(model_sha256) != 64 or any(character not in "0123456789abcdef" for character in model_sha256):
+
+    def __init__(
+        self,
+        model_sha256: str,
+        backend: Callable[[list[float]], Awaitable[list[float]]],
+        *,
+        capacity: int = 16,
+    ):
+        if (
+            capacity <= 0
+            or len(model_sha256) != 64
+            or any(character not in "0123456789abcdef" for character in model_sha256)
+        ):
             raise ValueError("Positive bounded queue and exact model SHA required")
         self.model_sha256 = model_sha256
         self.backend = backend
@@ -83,7 +95,9 @@ class BoundedPredictor:
             raise ServingFailure("SERVICE_NOT_READY", 503)
         if request.expected_model_sha256 != self.model_sha256:
             raise ServingFailure("STALE_MODEL", 409)
-        queued = _Queued(request, time.perf_counter(), asyncio.get_running_loop().create_future())
+        queued = _Queued(
+            request, time.perf_counter(), asyncio.get_running_loop().create_future()
+        )
         try:
             self.queue.put_nowait(queued)
         except asyncio.QueueFull as error:
@@ -105,14 +119,34 @@ class BoundedPredictor:
                 try:
                     scores = await self.backend(item.request.features)
                     self.completed_backend_calls += 1
-                    if len(scores) != 6 or not all(math.isfinite(score) for score in scores):
+                    if len(scores) != 6 or not all(
+                        math.isfinite(score) for score in scores
+                    ):
                         raise ValueError("Invalid six-candidate model output")
                     candidate = max(range(6), key=lambda index: scores[index])
-                    response = {"request_id": item.request.request_id, "model_sha256": self.model_sha256, "evidence_domain": "S1_SYNTHETIC_OBSERVED_VALUE_SURROGATE", "scores": scores, "provisional_candidate_index": candidate, "queue_seconds": begin - item.admitted_at, "backend_seconds": time.perf_counter() - begin, "feature_to_provisional_decision_seconds": time.perf_counter() - item.admitted_at, "decision_scope": "frozen mean-head ranking only; not authorized, host-guarded or adaptive campaign decision", "state_mutations": 0}
+                    response = {
+                        "request_id": item.request.request_id,
+                        "model_sha256": self.model_sha256,
+                        "evidence_domain": "S1_SYNTHETIC_OBSERVED_VALUE_SURROGATE",
+                        "scores": scores,
+                        "provisional_candidate_index": candidate,
+                        "queue_seconds": begin - item.admitted_at,
+                        "backend_seconds": time.perf_counter() - begin,
+                        "feature_to_provisional_decision_seconds": time.perf_counter()
+                        - item.admitted_at,
+                        "decision_scope": "frozen mean-head ranking only; not authorized, host-guarded or adaptive campaign decision",
+                        "state_mutations": 0,
+                    }
                     if not item.future.done():
                         item.future.set_result(response)
                 except Exception as error:
-                    reason = "RESOURCE_ENVELOPE_LOST" if isinstance(error, BackendEnvelopeLost) else "BACKEND_RESOURCE_EXHAUSTED" if isinstance(error, BackendResourceExhausted) else "BACKEND_FAILED"
+                    reason = (
+                        "RESOURCE_ENVELOPE_LOST"
+                        if isinstance(error, BackendEnvelopeLost)
+                        else "BACKEND_RESOURCE_EXHAUSTED"
+                        if isinstance(error, BackendResourceExhausted)
+                        else "BACKEND_FAILED"
+                    )
                     failure = ServingFailure(reason, 503)
                     if not item.future.done():
                         item.future.set_exception(failure)
@@ -122,6 +156,7 @@ class BoundedPredictor:
 
 def create_app(service: BoundedPredictor) -> FastAPI:
     from contextlib import asynccontextmanager
+
     @asynccontextmanager
     async def lifespan(app):
         await service.start()
@@ -129,14 +164,25 @@ def create_app(service: BoundedPredictor) -> FastAPI:
             yield
         finally:
             await service.stop()
+
     app = FastAPI(lifespan=lifespan)
+
     @app.get("/health")
     async def health():
-        return {"ready": service.accepting, "model_sha256": service.model_sha256, "queued": service.queue.qsize(), "queue_capacity": service.queue.maxsize}
+        return {
+            "ready": service.accepting,
+            "model_sha256": service.model_sha256,
+            "queued": service.queue.qsize(),
+            "queue_capacity": service.queue.maxsize,
+        }
+
     @app.post("/predict")
     async def predict(request: PredictionRequest):
         try:
             return await service.predict(request)
         except ServingFailure as error:
-            raise HTTPException(status_code=error.http_status, detail=error.reason) from error
+            raise HTTPException(
+                status_code=error.http_status, detail=error.reason
+            ) from error
+
     return app

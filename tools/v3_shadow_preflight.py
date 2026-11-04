@@ -1,10 +1,14 @@
 from __future__ import annotations
-import hashlib, json, time
+
+import hashlib
+import json
+import time
 from pathlib import Path
 
 ROOT = Path("/mnt/c/Users/bjw-0/Downloads/AURORA-Ads")
 OUT = ROOT / "reports" / "extension_v5_continuation_v3_shadow"
 OUT.mkdir(parents=True, exist_ok=True)
+
 
 def sha(p: Path) -> str:
     h = hashlib.sha256()
@@ -13,8 +17,10 @@ def sha(p: Path) -> str:
             h.update(chunk)
     return h.hexdigest()
 
+
 def read(p: Path):
     return json.loads(p.read_text(encoding="utf-8"))
+
 
 def verify_pointer(rel: str):
     pointer_path = ROOT / rel
@@ -31,6 +37,7 @@ def verify_pointer(rel: str):
         "artifact": str(artifact),
         "artifact_sha256": actual,
     }, read(artifact)
+
 
 result = {
     "program": "AURORA_EXTENSION_V5_CONTINUATION_V3_SHADOW_PREFLIGHT",
@@ -92,7 +99,10 @@ for rel in [
     ref, _ = verify_pointer(rel)
     result.setdefault("r3_supporting_inputs", []).append(ref)
 
-followon = ROOT / "reports/extension_v5_continuation_v3/state/FOLLOWON_CPU_VALIDATION_1791156350857215958.json"
+followon = (
+    ROOT
+    / "reports/extension_v5_continuation_v3/state/FOLLOWON_CPU_VALIDATION_1791156350857215958.json"
+)
 if followon.exists():
     val = read(followon)
     result["followon_cpu_validation"] = {
@@ -101,7 +111,11 @@ if followon.exists():
         "final_outcomes_accessed": val.get("final_outcomes_accessed"),
         "sha256": sha(followon),
     }
-    if not val.get("passed") or val.get("cuda_accessed") or val.get("final_outcomes_accessed"):
+    if (
+        not val.get("passed")
+        or val.get("cuda_accessed")
+        or val.get("final_outcomes_accessed")
+    ):
         raise RuntimeError("FOLLOWON_CPU_VALIDATION_NOT_CLEAN")
 
 result["passed"] = True

@@ -1,4 +1,5 @@
 """Mature observable S1 auction rows, not counterfactual or public-data joins."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -6,7 +7,7 @@ from dataclasses import dataclass
 import numpy as np
 from numpy.typing import NDArray
 
-from .auction_learning import AuctionObservation, CONTEXT_NAMES
+from .auction_learning import CONTEXT_NAMES, AuctionObservation
 
 
 @dataclass(frozen=True)
@@ -24,14 +25,23 @@ class AuctionDataset:
     def market_inputs(self) -> tuple[NDArray, NDArray, NDArray, NDArray]:
         # Unaffordable/unsubmitted opportunities have no price censoring event.
         mask = self.eligible & (self.submitted_bid > 0)
-        return tuple(array[mask].copy() for array in
-                     (self.context, self.submitted_bid, self.won, self.payment))
+        return tuple(
+            array[mask].copy()
+            for array in (self.context, self.submitted_bid, self.won, self.payment)
+        )
 
     def value_inputs(self) -> tuple[NDArray, NDArray, NDArray, list[str]]:
         # A losing opportunity's zero is missing exposure value, not a label.
         mask = self.won
-        ids = [identity for identity, selected in zip(self.origin_ids, mask) if selected]
-        return self.context[mask].copy(), self.observed_gross[mask].copy(), np.ones(int(mask.sum()), dtype=bool), ids
+        ids = [
+            identity for identity, selected in zip(self.origin_ids, mask) if selected
+        ]
+        return (
+            self.context[mask].copy(),
+            self.observed_gross[mask].copy(),
+            np.ones(int(mask.sum()), dtype=bool),
+            ids,
+        )
 
 
 class AuctionCollector:
@@ -41,6 +51,7 @@ class AuctionCollector:
     local row suffix distinguishes opportunities *within* that observed cohort.
     Empty cohorts remain in the lineage manifest, even when they supply no rows.
     """
+
     def __init__(self) -> None:
         self._cohorts: dict[str, AuctionObservation] = {}
         self._probability_known: bool | None = None
@@ -50,17 +61,32 @@ class AuctionCollector:
             raise ValueError("Duplicate mature auction cohort; no double-counting")
         known = observation.executed_bid_probability is not None
         if self._probability_known is not None and self._probability_known != known:
-            raise ValueError("Do not silently mix known and unavailable logging probabilities")
+            raise ValueError(
+                "Do not silently mix known and unavailable logging probabilities"
+            )
         # Revalidate owned copies: callers cannot mutate a frozen dataclass's
         # arrays after admission to change the later dataset.
         owned = AuctionObservation(
-            observation.cohort_id, observation.origin_interval, observation.observed_at_day,
-            observation.context.copy(), observation.submitted_bid.copy(), observation.eligible.copy(),
-            observation.won.copy(), observation.payment.copy(), observation.observed_gross.copy(),
+            observation.cohort_id,
+            observation.origin_interval,
+            observation.observed_at_day,
+            observation.context.copy(),
+            observation.submitted_bid.copy(),
+            observation.eligible.copy(),
+            observation.won.copy(),
+            observation.payment.copy(),
+            observation.observed_gross.copy(),
             None if not known else observation.executed_bid_probability.copy(),
         )
-        for array in (owned.context, owned.submitted_bid, owned.eligible, owned.won,
-                      owned.payment, owned.observed_gross, owned.executed_bid_probability):
+        for array in (
+            owned.context,
+            owned.submitted_bid,
+            owned.eligible,
+            owned.won,
+            owned.payment,
+            owned.observed_gross,
+            owned.executed_bid_probability,
+        ):
             if array is not None:
                 array.setflags(write=False)
         self._cohorts[owned.cohort_id] = owned
@@ -70,18 +96,32 @@ class AuctionCollector:
         if not self._cohorts:
             raise ValueError("No mature auction callbacks received")
         records = list(self._cohorts.values())
+
         def concatenate(name):
             return np.concatenate([getattr(row, name) for row in records], axis=0)
+
         context = concatenate("context")
         if context.shape[1] != len(CONTEXT_NAMES):
             raise ValueError("Public context width changed")
         # Length-prefixed cohort identifiers avoid delimiter ambiguities.
-        identities = tuple(f"{len(row.cohort_id)}:{row.cohort_id}:{index}"
-                           for row in records for index in range(len(row.submitted_bid)))
-        return AuctionDataset(context, concatenate("submitted_bid"), concatenate("eligible"),
-                              concatenate("won"), concatenate("payment"), concatenate("observed_gross"),
-                              identities, tuple(self._cohorts),
-                              concatenate("executed_bid_probability") if self._probability_known else None)
+        identities = tuple(
+            f"{len(row.cohort_id)}:{row.cohort_id}:{index}"
+            for row in records
+            for index in range(len(row.submitted_bid))
+        )
+        return AuctionDataset(
+            context,
+            concatenate("submitted_bid"),
+            concatenate("eligible"),
+            concatenate("won"),
+            concatenate("payment"),
+            concatenate("observed_gross"),
+            identities,
+            tuple(self._cohorts),
+            concatenate("executed_bid_probability")
+            if self._probability_known
+            else None,
+        )
 
 
 def require_disjoint_cohorts(*datasets: AuctionDataset) -> None:
